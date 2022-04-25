@@ -26,11 +26,14 @@
 package nick1st.fancyvideo;
 
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.EventSubclassTransformer;
 import net.minecraftforge.fml.IExtensionPoint;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.loading.FMLEnvironment;
+import nick1st.fancyvideo.api.EmptyMediaPlayer;
 import nick1st.fancyvideo.config.SimpleConfig;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LogEvent;
@@ -47,6 +50,9 @@ public class FancyVideoAPI {
     // Common Class Holder
     private CommonMainClass commonClass;
 
+    // Example Holder
+    private Example example;
+
     public FancyVideoAPI() {
         // Client only
         ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class, ()-> new IExtensionPoint.DisplayTest(() -> "ANY", (a, b) -> true));
@@ -61,7 +67,7 @@ public class FancyVideoAPI {
         // Ignore the silly NullPointers caused by ModLauncher // TODO Make this actually STOP the error
         if (LogManager.getLogger(EventSubclassTransformer.class) instanceof org.apache.logging.log4j.core.Logger && !config.getAsBool("debugLog")) {
             org.apache.logging.log4j.core.Logger logger = (org.apache.logging.log4j.core.Logger) LogManager.getLogger(EventSubclassTransformer.class);
-            logger.warn("## WARNING ## 'FancyVideo API' is modifying this log! Disable this behavior in config BEFORE reporting bugs!");
+            logger.warn("## WARNING ## 'FancyVideo API' is modifying this log! Disable this behavior in its config BEFORE reporting bugs!");
             logger.addFilter(new AbstractFilter() {
                 @Override
                 public Result filter(LogEvent event) {
@@ -79,5 +85,11 @@ public class FancyVideoAPI {
         }
 
         commonClass = new CommonMainClass(config);
+
+        // Example?
+        if (config.getAsBool("example")) {
+            example = new Example();
+            MinecraftForge.EVENT_BUS.addListener(example::renderTick);
+        }
     }
 }

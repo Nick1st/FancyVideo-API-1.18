@@ -1,6 +1,7 @@
 package nick1st.fancyvideo;
 
 import com.sun.jna.NativeLibrary;
+import nick1st.fancyvideo.api.EmptyMediaPlayer;
 import nick1st.fancyvideo.config.SimpleConfig;
 import nick1st.fancyvideo.internal.Arch;
 import nick1st.fancyvideo.internal.DLLHandler;
@@ -47,8 +48,11 @@ public class CommonMainClass {
 
         // Init natives
         if (!onInit()) {
-            System.exit(-9515);
+            System.exit(-9515); // TODO Run in NO_LIBRARY mode instead of causing a "soft" crash
         }
+
+        // Setup API
+        EmptyMediaPlayer.getInstance();
     }
 
     private boolean onInit() {
@@ -65,7 +69,7 @@ public class CommonMainClass {
             Constants.LOG.info("Native VLC Found at '{}'", path);
             return true;
         } catch (UnsatisfiedLinkError e1) {
-            Constants.LOG.error("Couldn't load vlc binaries, crashing...");
+            Constants.LOG.error("Couldn't load vlc binaries, loading in NO_LIBRARY mode...");
             return false;
         }
     }

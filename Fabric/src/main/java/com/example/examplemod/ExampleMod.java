@@ -3,8 +3,6 @@ package com.example.examplemod;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 
-import java.io.File;
-
 public class ExampleMod implements ModInitializer {
     
     @Override

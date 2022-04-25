@@ -6,6 +6,17 @@ plugins {
 
 archivesBaseName = "${mod_name}-fabric-${minecraft_version}"
 
+//repositories {
+//    maven { // Add Caprica's Github to get access to the Snapshot builds
+//        name = 'GitHubPackages'
+//        url = uri('https://maven.pkg.github.com/caprica/vlcj')
+//        credentials {
+//            username = project.findProperty('gpr.user') ?: System.getenv('USERNAME')
+//            password = project.findProperty('gpr.key') ?: System.getenv('TOKEN')
+//        }
+//    }
+//}
+
 dependencies {
     minecraft "com.mojang:minecraft:${minecraft_version}"
     mappings loom.officialMojangMappings()
@@ -13,6 +24,7 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
     implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
     implementation project(":Common")
+    implementation("uk.co.caprica:vlcj:${vlcj_version}") // vlcJ
 }
 
 loom {

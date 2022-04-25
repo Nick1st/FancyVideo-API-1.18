@@ -1,5 +1,6 @@
 package nick1st.fancyvideo;
 
+import nick1st.fancyvideo.example.MatrixStackRenderTest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,6 +17,9 @@ public class Constants {
     // System info
     public static String OS;
     public static String ARCH;
+
+    // First render Tick
+    public static boolean renderTick;
 
     // String constants
     public static final String AUDIO_OUTPUT = "audio_output";

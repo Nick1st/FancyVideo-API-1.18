@@ -14,6 +14,19 @@ apply plugin: 'maven-publish'
 
 archivesBaseName = "${mod_name}-forge-${minecraft_version}"
 
+configurations {
+    library
+    implementation.extendsFrom library
+}
+
+minecraft.runs.all {
+    lazyToken('minecraft_classpath') {
+        configurations.library.copyRecursive().resolve().collect {
+            it.absolutePath
+        }.join(File.pathSeparator)
+    }
+}
+
 minecraft {
     mappings channel: 'official', version: minecraft_version
     
@@ -31,6 +44,8 @@ minecraft {
             taskName 'Client'
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
+            // This one's important, why is the default config so bad?
+            property 'log4j.configurationFile', 'config\\log4j2.xml'
             mods {
                 modClientRun {
                     source sourceSets.main
@@ -45,6 +60,8 @@ minecraft {
             taskName 'Server'
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
+            // This one's important, why is the default config so bad?
+            property 'log4j.configurationFile', 'config\\log4j2.xml'
             mods {
                 modServerRun {
                     source sourceSets.main
@@ -72,9 +89,24 @@ minecraft {
 
 sourceSets.main.resources.srcDir 'src/generated/resources'
 
+//repositories {
+//    maven { // Add Caprica's Github to get access to the Snapshot builds
+//        name = 'GitHubPackages'
+//        url = uri('https://maven.pkg.github.com/caprica/vlcj')
+//        credentials {
+//            username = project.findProperty('gpr.user') ?: System.getenv('USERNAME')
+//            password = project.findProperty('gpr.key') ?: System.getenv('TOKEN')
+//        }
+//    }
+//}
+
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
     compileOnly project(":Common")
+    library("uk.co.caprica:vlcj:${vlcj_version}") {
+        exclude group: 'net.java.dev.jna', module: 'jna'
+        exclude group: 'net.java.dev.jna', module: 'jna-platform'
+    }// vlcJ
 }
 
 tasks.withType(JavaCompile) {
