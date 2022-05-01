@@ -23,34 +23,22 @@
  * Copyright 2022 Nick1st.
  */
 
-package nick1st.fancyvideo.api.internal; //NOSONAR
+package nick1st.fancyvideo.api.eventbus; //NOSONAR
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 /**
- * @since 0.1.0.0
+ * A methode annotated with this will be considered a valid event listener.
+ *
+ * @see EventPhase
+ * @see EventPriority
+ * @since 0.2.0.0
  */
-public class AdvancedFrame {
-    private final int[] frame;
-    private final int width;
+@Retention(RetentionPolicy.RUNTIME)
+public @interface FancyVideoEvent {
 
-    public AdvancedFrame(int[] frame, int width) {
-        this.frame = frame;
-        this.width = width;
-    }
+    EventPriority priority() default EventPriority.NORMAL;
 
-    public AdvancedFrame(AdvancedFrame toClone) {
-        if (toClone.frame == null) {
-            this.frame = new int[0];
-        } else {
-            this.frame = toClone.frame.clone();
-        }
-        this.width = toClone.width;
-    }
-
-    public int getWidth() {
-        return width;
-    }
-
-    public int[] getFrame() {
-        return frame;
-    }
+    EventPhase phase() default EventPhase.EVENT;
 }

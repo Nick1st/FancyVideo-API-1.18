@@ -1,8 +1,37 @@
-package nick1st.fancyvideo;
+/*
+ * This file is part of the FancyVideo-API.
+ *
+ * The FancyVideo-API is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The FancyVideo-API is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * The FancyVideo-API uses VLCJ, Copyright 2009-2021 Caprica Software Limited,
+ * licensed under the GNU General Public License.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with VLCJ.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with FancyVideo-API.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Copyright 2022 Nick1st.
+ */
 
-import com.sun.jna.NativeLibrary;
-import nick1st.fancyvideo.api.EmptyMediaPlayer;
+package nick1st.fancyvideo; //NOSONAR
+
+import com.sun.jna.NativeLibrary; //NOSONAR
+import nick1st.fancyvideo.api.MediaPlayerHandler;
+import nick1st.fancyvideo.api.eventbus.EventException;
+import nick1st.fancyvideo.api.eventbus.FancyVideoEventBus;
+import nick1st.fancyvideo.api.eventbus.event.PlayerRegistryEvent;
 import nick1st.fancyvideo.config.SimpleConfig;
+import nick1st.fancyvideo.example.APIExample;
 import nick1st.fancyvideo.internal.Arch;
 import nick1st.fancyvideo.internal.DLLHandler;
 import nick1st.fancyvideo.internal.LibraryMapping;
@@ -38,6 +67,8 @@ public class CommonMainClass {
 
         Constants.ARCH = Arch.getArch().toString();
 
+        Constants.LOG.info("Running on OS: {} {}", Constants.OS, Constants.ARCH);
+
         // Delete mismatched dlls
         if (config.getAsInt("dllVersion") != Constants.DLL_VERSION) {
             Constants.LOG.info("DLL Version did change, removing old files...");
@@ -51,8 +82,30 @@ public class CommonMainClass {
             System.exit(-9515); // TODO Run in NO_LIBRARY mode instead of causing a "soft" crash
         }
 
+        // Setup Example?
+        if (config.getAsBool("example")) {
+            try {
+                APIExample example = new APIExample();
+                FancyVideoEventBus.getInstance().registerEvent(example);
+            } catch (EventException e) {
+                Constants.LOG.error("A critical error happened", e);
+            }
+        }
+    }
+
+    /**
+     * This should be called as soon as a GL Context is available.
+     */
+    public void apiSetup() {
         // Setup API
-        EmptyMediaPlayer.getInstance();
+        MediaPlayerHandler.getInstance();
+        try {
+            FancyVideoEventBus.getInstance().registerEvent(MediaPlayerHandler.getInstance());
+            FancyVideoEventBus.getInstance().registerEvent(FancyVideoEvents.class);
+        } catch (EventException e) {
+            Constants.LOG.error("A critical error happened", e);
+        }
+        FancyVideoEventBus.getInstance().runEvent(new PlayerRegistryEvent.AddPlayerEvent());
     }
 
     private boolean onInit() {
@@ -92,7 +145,9 @@ public class CommonMainClass {
 
     private void checkVersion() throws LinkageError {
         LibVlcVersion version = new LibVlcVersion();
-        Constants.LOG.debug(String.valueOf(new Version(libvlc_get_version())));
+        if (Constants.LOG.isDebugEnabled()) {
+            Constants.LOG.debug(String.valueOf(new Version(libvlc_get_version())));
+        }
         if (!version.isSupported()) {
             throw new LinkageError(String.format("Failed to find minimum required VLC version %s, found %s", version.getRequiredVersion(), version.getVersion()));
         }

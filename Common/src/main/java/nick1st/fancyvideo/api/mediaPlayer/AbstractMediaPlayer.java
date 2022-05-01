@@ -23,34 +23,37 @@
  * Copyright 2022 Nick1st.
  */
 
-package nick1st.fancyvideo.api.internal; //NOSONAR
+package nick1st.fancyvideo.api.mediaPlayer; //NOSONAR
+
+import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 
 /**
- * @since 0.1.0.0
+ * Abstract MediaPlayer. This is the minimal starting point for own implementations.
+ *
+ * @see MediaPlayerBase
+ * @since 0.2.0.0
  */
-public class AdvancedFrame {
-    private final int[] frame;
-    private final int width;
+public abstract class AbstractMediaPlayer { //NOSONAR
 
-    public AdvancedFrame(int[] frame, int width) {
-        this.frame = frame;
-        this.width = width;
-    }
+    /**
+     * @return This returns the true {@link EmbeddedMediaPlayer}, allowing you to use most functions of libvlc.
+     * This is now the preferred way to call into VLCJ's API. You must be aware that crashes in the native lib will lead to null pointers.
+     * @since 0.2.0.0
+     */
+    public abstract EmbeddedMediaPlayer api();
 
-    public AdvancedFrame(AdvancedFrame toClone) {
-        if (toClone.frame == null) {
-            this.frame = new int[0];
-        } else {
-            this.frame = toClone.frame.clone();
-        }
-        this.width = toClone.width;
-    }
+    /**
+     * Call this to remove (/unregister) your MediaPlayer.
+     *
+     * @since 0.2.0.0
+     */
+    public abstract void markToRemove();
 
-    public int getWidth() {
-        return width;
-    }
-
-    public int[] getFrame() {
-        return frame;
-    }
+    /**
+     * This is forcefully called when the MediaPlayer is removed (/unregistered).
+     * Implement custom cleanup behavior by overriding this methode.
+     *
+     * @since 0.2.0.0
+     */
+    public abstract void cleanup();
 }

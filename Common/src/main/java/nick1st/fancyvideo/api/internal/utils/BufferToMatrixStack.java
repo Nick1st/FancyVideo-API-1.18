@@ -23,7 +23,7 @@
  * Copyright 2022 Nick1st.
  */
 
-package nick1st.fancyvideo.api.internal.utils;
+package nick1st.fancyvideo.api.internal.utils; //NOSONAR
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
@@ -34,6 +34,12 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * Provides some legacy code for the (currently) broken renderToMatrixStack method.
+ *
+ * @since 0.0.0.0
+ */
+@SuppressWarnings("unused")
 public class BufferToMatrixStack {
     public final Matrix4f matrix4f;
     public final BufferBuilder bb;
@@ -48,9 +54,9 @@ public class BufferToMatrixStack {
         bb.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR); //TODO Validate that VertexFormat.Mode.QUADS matches vertex mode 7
     }
 
-    public BufferToMatrixStack(PoseStack matrix, Tesselator tessellator) {
+    public BufferToMatrixStack(PoseStack matrix, Tesselator tesselator) {
         matrix4f = matrix.last().pose();
-        bb = tessellator.getBuilder();
+        bb = tesselator.getBuilder();
         bb.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
     }
 

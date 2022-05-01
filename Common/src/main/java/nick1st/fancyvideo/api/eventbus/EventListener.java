@@ -23,34 +23,18 @@
  * Copyright 2022 Nick1st.
  */
 
-package nick1st.fancyvideo.api.internal; //NOSONAR
+package nick1st.fancyvideo.api.eventbus; //NOSONAR
+
+import java.lang.reflect.Method;
 
 /**
- * @since 0.1.0.0
+ * @param event    The methode to send to.
+ * @param instance The object or class to send to.
+ * @param priority The priority of this event.
+ * @param phase    The phase we should send to the methode.
+ * @see EventPriority
+ * @see nick1st.fancyvideo.api.eventbus.event.Event
+ * @since 0.2.0.0
  */
-public class AdvancedFrame {
-    private final int[] frame;
-    private final int width;
-
-    public AdvancedFrame(int[] frame, int width) {
-        this.frame = frame;
-        this.width = width;
-    }
-
-    public AdvancedFrame(AdvancedFrame toClone) {
-        if (toClone.frame == null) {
-            this.frame = new int[0];
-        } else {
-            this.frame = toClone.frame.clone();
-        }
-        this.width = toClone.width;
-    }
-
-    public int getWidth() {
-        return width;
-    }
-
-    public int[] getFrame() {
-        return frame;
-    }
+public record EventListener(Method event, Object instance, EventPriority priority, EventPhase phase) {
 }

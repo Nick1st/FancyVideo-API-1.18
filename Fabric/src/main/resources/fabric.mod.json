@@ -1,28 +1,29 @@
 {
     "schemaVersion": 1,
-    "id": "modid",
+    "id": "fancyvideo_api",
     "version": "${version}",
   
-    "name": "Example Mod",
-    "description": "This is an example description! Tell everyone what your mod is about!",
+    "name": "FancyVideo API",
+    "description": "A mod for rendering videos in minecraft.",
     "authors": [
-      "Me!"
+      "Nick1st"
     ],
     "contact": {
-      "homepage": "https://fabricmc.net/",
-      "sources": "https://github.com/FabricMC/fabric-example-mod"
+      "homepage": "https://www.curseforge.com/minecraft/mc-mods/fancyvideo-api",
+      "sources": "https://github.com/Nick1st/FancyVideo-API/issues"
     },
   
-    "license": "CC0-1.0",
+    "license": "GNU GPL 3.0",
     "icon": "assets/modid/icon.png",
   
-    "environment": "*",
+    "environment": "client",
     "entrypoints": {
       "main": [
-        "com.example.examplemod.ExampleMod"
+        "nick1st.fancyvideo.FancyVideoAPI"
       ]
     },
     "mixins": [
+      "fancyvideo_api.mixins.json"
     ],
   
     "depends": {
@@ -30,9 +31,6 @@
       "fabric": "*",
       "minecraft": "1.18.x",
       "java": ">=17"
-    },
-    "suggests": {
-      "another-mod": "*"
     }
   }
   

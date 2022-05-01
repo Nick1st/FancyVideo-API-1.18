@@ -23,34 +23,21 @@
  * Copyright 2022 Nick1st.
  */
 
-package nick1st.fancyvideo.api.internal; //NOSONAR
+package nick1st.fancyvideo.api.eventbus; //NOSONAR
+
+import nick1st.fancyvideo.api.eventbus.event.Event;
 
 /**
- * @since 0.1.0.0
+ * Priority an event can have. SUPREME is reserved for internal use only.
+ *
+ * @see FancyVideoEventBus#runEvent(Event)
+ * @since 0.2.0.0
  */
-public class AdvancedFrame {
-    private final int[] frame;
-    private final int width;
-
-    public AdvancedFrame(int[] frame, int width) {
-        this.frame = frame;
-        this.width = width;
-    }
-
-    public AdvancedFrame(AdvancedFrame toClone) {
-        if (toClone.frame == null) {
-            this.frame = new int[0];
-        } else {
-            this.frame = toClone.frame.clone();
-        }
-        this.width = toClone.width;
-    }
-
-    public int getWidth() {
-        return width;
-    }
-
-    public int[] getFrame() {
-        return frame;
-    }
+public enum EventPriority {
+    SURPREME,
+    HIGHEST,
+    HIGH,
+    NORMAL,
+    LOW,
+    LOWEST
 }

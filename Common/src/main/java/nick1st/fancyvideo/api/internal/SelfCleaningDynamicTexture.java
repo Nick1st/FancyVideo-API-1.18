@@ -23,22 +23,33 @@
  * Copyright 2022 Nick1st.
  */
 
-package nick1st.fancyvideo.api.internal;
+package nick1st.fancyvideo.api.internal; //NOSONAR
 
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.platform.TextureUtil;
 import net.minecraft.client.renderer.texture.DynamicTexture;
+import nick1st.fancyvideo.Constants;
+import org.jetbrains.annotations.NotNull;
 
+/**
+ * Implementation of a self-cleaning DynamicTexture. Allows for high frame rate uploads.
+ *
+ * @since 0.1.0.0
+ */
 public class SelfCleaningDynamicTexture extends DynamicTexture {
     public SelfCleaningDynamicTexture(NativeImage nativeImage) {
         super(nativeImage);
     }
 
     @Override
-    public void setPixels(NativeImage nativeImage) {
+    public void setPixels(@NotNull NativeImage nativeImage) {
         super.setPixels(nativeImage);
-        TextureUtil.prepareImage(this.getId(), this.getPixels().getWidth(), this.getPixels().getHeight());
-        this.upload();
+        if (this.getPixels() != null) {
+            TextureUtil.prepareImage(this.getId(), this.getPixels().getWidth(), this.getPixels().getHeight());
+            this.upload();
+        } else {
+            Constants.LOG.error("Called setPixels in {} with NativeImage.getPixels == null", this.getClass().getName());
+        }
     }
 
 }

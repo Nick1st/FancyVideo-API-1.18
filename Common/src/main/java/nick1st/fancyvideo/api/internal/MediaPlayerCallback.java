@@ -23,27 +23,32 @@
  * Copyright 2022 Nick1st.
  */
 
-package nick1st.fancyvideo.api.internal;
+package nick1st.fancyvideo.api.internal; //NOSONAR
 
-import nick1st.fancyvideo.api.MediaPlayer;
+import nick1st.fancyvideo.api.mediaPlayer.MediaPlayerBase;
 import uk.co.caprica.vlcj.player.embedded.videosurface.callback.RenderCallbackAdapter;
 
+/**
+ * This provides a simple RenderCallbackAdapter implementation
+ *
+ * @since 0.1.0.0
+ */
 public class MediaPlayerCallback extends RenderCallbackAdapter {
-    private final MediaPlayer mediaPlayer;
+    private final MediaPlayerBase mediaPlayer;
     private int width;
 
-    public MediaPlayerCallback(int width, MediaPlayer mediaPlayer) {
+    public MediaPlayerCallback(int width, MediaPlayerBase mediaPlayer) {
         this.width = width;
         this.mediaPlayer = mediaPlayer;
     }
 
     public void setBuffer(AdvancedFrame buffer) {
-        this.width = buffer.width;
-        setBuffer(buffer.frame);
+        this.width = buffer.getWidth();
+        setBuffer(buffer.getFrame());
     }
 
     @Override
     protected void onDisplay(uk.co.caprica.vlcj.player.base.MediaPlayer mediaPlayer, int[] buffer) {
-        this.mediaPlayer.setFrame(new AdvancedFrame(buffer, width));
+        this.mediaPlayer.setAdvancedFrame(new AdvancedFrame(buffer, width));
     }
 }

@@ -1,7 +1,7 @@
-package com.example.examplemod.platform;
+package nick1st.fancyvideo.platform;
 
-import com.example.examplemod.platform.services.IPlatformHelper;
 import net.fabricmc.loader.api.FabricLoader;
+import nick1st.fancyvideo.platform.services.IPlatformHelper;
 
 public class FabricPlatformHelper implements IPlatformHelper {
 
