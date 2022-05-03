@@ -27,6 +27,7 @@ package nick1st.fancyvideo.api.eventbus.event; //NOSONAR
 
 import nick1st.fancyvideo.api.DynamicResourceLocation;
 import nick1st.fancyvideo.api.MediaPlayerHandler;
+import nick1st.fancyvideo.api.eventbus.EventPhase;
 
 /**
  * Base class of all PlayerRegistry Events
@@ -104,7 +105,10 @@ public class PlayerRegistryEvent {
 
         @Override
         public void afterPhase() {
-            // Again, no cleanup.
+            // Cleanup the requested player
+            if (phase == EventPhase.EVENT) {
+                MediaPlayerHandler.getInstance().getMediaPlayer(resourceLocation).cleanup();
+            }
         }
     }
 }

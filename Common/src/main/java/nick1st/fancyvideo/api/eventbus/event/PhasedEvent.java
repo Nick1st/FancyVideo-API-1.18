@@ -36,7 +36,7 @@ import nick1st.fancyvideo.api.eventbus.FancyVideoEventBus;
  */
 public abstract class PhasedEvent extends Event {
 
-    private EventPhase phase = EventPhase.PRE;
+    protected EventPhase phase = EventPhase.PRE;
 
     /**
      * @return True, as long as the phase is not {@link EventPhase}.Post;

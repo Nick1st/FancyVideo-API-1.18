@@ -33,6 +33,7 @@ import net.minecraft.realms.RealmsScreen;
 import nick1st.fancyvideo.Constants;
 import nick1st.fancyvideo.api.DynamicResourceLocation;
 import nick1st.fancyvideo.api.MediaPlayerHandler;
+import nick1st.fancyvideo.api.eventbus.EventPhase;
 import nick1st.fancyvideo.api.eventbus.FancyVideoEvent;
 import nick1st.fancyvideo.api.eventbus.event.PlayerRegistryEvent;
 import nick1st.fancyvideo.api.mediaPlayer.MediaPlayerBase;
@@ -53,7 +54,7 @@ public class APIExample {
 
     @FancyVideoEvent
     public void drawBackground(DrawBackgroundEvent event) {
-        if (event.screen instanceof RealmsScreen && MediaPlayerHandler.getInstance().mediaPlayerExists(resourceLocation) &&
+        if (event.screen instanceof RealmsScreen && resourceLocation != null &&
                 MediaPlayerHandler.getInstance().getMediaPlayer(resourceLocation) instanceof MediaPlayerBase mediaPlayer) {
                 if (!init) {
                     mediaPlayer.api().controls().play();
@@ -70,6 +71,13 @@ public class APIExample {
                 RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
                 GuiComponent.blit(event.poseStack, 0, 0, 0.0F, 0.0F, width, height, width, height);
                 RenderSystem.disableBlend();
+        }
+    }
+
+    @FancyVideoEvent(phase = EventPhase.PRE)
+    public void removePlayer(PlayerRegistryEvent.RemovePlayerEvent event) {
+        if (event.resourceLocation == resourceLocation) {
+            resourceLocation = null;
         }
     }
 }
