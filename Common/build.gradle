@@ -21,17 +21,6 @@ minecraft {
     }
 }
 
-//repositories {
-//    maven { // Add Caprica's Github to get access to the Snapshot builds
-//        name = 'GitHubPackages'
-//        url = uri('https://maven.pkg.github.com/caprica/vlcj')
-//        credentials {
-//            username = project.findProperty('gpr.user') ?: System.getenv('USERNAME')
-//            password = project.findProperty('gpr.key') ?: System.getenv('TOKEN')
-//        }
-//    }
-//}
-
 dependencies {
      compileOnly group:'org.spongepowered', name:'mixin', version:'0.8.5'
      implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'

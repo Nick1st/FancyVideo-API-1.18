@@ -7,6 +7,11 @@ buildscript {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
     }
 }
+
+plugins {
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
+}
+
 apply plugin: 'java'
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
@@ -89,17 +94,6 @@ minecraft {
 
 sourceSets.main.resources.srcDir 'src/generated/resources'
 
-//repositories {
-//    maven { // Add Caprica's Github to get access to the Snapshot builds
-//        name = 'GitHubPackages'
-//        url = uri('https://maven.pkg.github.com/caprica/vlcj')
-//        credentials {
-//            username = project.findProperty('gpr.user') ?: System.getenv('USERNAME')
-//            password = project.findProperty('gpr.key') ?: System.getenv('TOKEN')
-//        }
-//    }
-//}
-
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
     compileOnly project(":Common")
@@ -115,6 +109,30 @@ tasks.withType(JavaCompile) {
 
 processResources {
     from project(":Common").sourceSets.main.resources
+}
+
+
+jar {
+    archiveClassifier.set('slim')
+    //archiveClassifier = 'slim'
+//    manifest {
+//        attributes([
+//                // Attributes here
+//        ])
+//    }
+//    manifest.attributes.putAll("test": "test")
+}
+
+shadowJar {
+    archiveClassifier.set('')
+    configurations = [project.configurations.library]
+    finalizedBy 'reobfShadowJar'
+}
+
+assemble.dependsOn shadowJar
+
+reobf {
+    shadowJar {}
 }
 
 

@@ -26,8 +26,8 @@
 package nick1st.fancyvideo.api; //NOSONAR
 
 import net.minecraft.resources.ResourceLocation;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 /**
@@ -60,7 +60,7 @@ public class DynamicResourceLocation extends ResourceLocation {
      * @since 0.2.0.0
      */
     @Override
-    public @NotNull String toString() {
+    public @Nonnull String toString() {
         return super.toString();
     }
 
@@ -70,7 +70,7 @@ public class DynamicResourceLocation extends ResourceLocation {
      * @return The FancyVideo-API ResourceLocation, <b>NOT</b> containing pre- and postfix.
      * @since 0.2.0.0
      */
-    public @NotNull String toWorkingString() {
+    public @Nonnull String toWorkingString() {
         return playerNamespace + ":" + playerPath;
     }
 
