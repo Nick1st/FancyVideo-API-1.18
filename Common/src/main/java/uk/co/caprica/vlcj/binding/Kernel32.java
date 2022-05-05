@@ -19,7 +19,7 @@
  * Modified 2022 Nick1st (Make it compatible with older jna)
  */
 
-package binding;
+package uk.co.caprica.vlcj.binding;
 
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
