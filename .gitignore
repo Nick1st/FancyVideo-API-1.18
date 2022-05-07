@@ -1,11 +1,3 @@
-# eclipse
-bin
-*.launch
-.settings
-.metadata
-.classpath
-.project
-
 # idea
 out
 *.ipr
@@ -19,8 +11,4 @@ build
 .gradle
 
 # other
-eclipse
 run
-
-# custom
-#gradle.properties

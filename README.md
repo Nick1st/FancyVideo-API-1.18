@@ -17,7 +17,7 @@ This guide will show how to import the MultiLoader Template into IntelliJ IDEA. 
 8. Assuming you were able to run the game in step 7 your workspace should now be set up.
 
 ### Eclipse
-While it is possible to use this template in Eclipse it is not recommended. During the development of this template multiple critical bugs and quirks related to Eclipse were found at nearly every level of the required build tools. While we continue to work with these tools to report and resolve issues support for projects like these are not there yet. For now Eclipse is considered unsupported by this project. The development cycle for build tools is notoriously slow so there are no ETAs available.
+Eclipse is not supported. During the development of this mod and the template it uses multiple critical bugs and quirks related to Eclipse were found at nearly every level of the required build tools. Eclipse is considered unsupported by this project.
 
 ## Development Guide
 When using this template the majority of your mod is developed in the Common project. The Common project is compiled against the vanilla game and is used to hold code that is shared between the different loader-specific versions of your mod. The Common project has no knowledge or access to ModLoader specific code, apis, or concepts. Code that requires something from a specific loader must be done through the project that is specific to that loader, such as the Forge or Fabric project.
