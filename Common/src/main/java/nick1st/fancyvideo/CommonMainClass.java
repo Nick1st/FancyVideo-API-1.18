@@ -82,6 +82,8 @@ public class CommonMainClass {
             System.exit(-9515); // TODO Run in NO_LIBRARY mode instead of causing a "soft" crash
         }
 
+        Runtime.getRuntime().addShutdownHook(new ShutdownHook());
+
         // Setup Example?
         if (config.getAsBool("example")) {
             try {

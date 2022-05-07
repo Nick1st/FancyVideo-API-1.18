@@ -48,7 +48,7 @@ public class FancyVideoConfig extends SimpleConfig {
         if (Services.PLATFORM.getPlatformName().equals("Forge")) {
             setProperty("debugLog", String.valueOf(false), "Enable debug logging. Disables the ModLauncher log filter. This cause massive log spam! Only activate this when you're told to!", "true / false", s -> Arrays.asList("true", "false").contains(s));
         }
-        setProperty("example", String.valueOf(false), "Activate the debug/showcase mode. Access it by pressing the Realms Button in Main Menu.", "true / false", s -> Arrays.asList("true", "false").contains(s));
+        setProperty("example", String.valueOf(false), "Activate the debug/showcase mode. Access it by pressing the Options Button in Main Menu.", "true / false", s -> Arrays.asList("true", "false").contains(s));
 
         read();
         write();

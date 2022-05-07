@@ -29,6 +29,8 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.datafixers.kinds.Const;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.screens.LanguageSelectScreen;
+import net.minecraft.client.gui.screens.OptionsScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.realms.RealmsScreen;
 import nick1st.fancyvideo.Constants;
@@ -55,7 +57,7 @@ public class APIExample {
 
     @FancyVideoEvent
     public void drawBackground(DrawBackgroundEvent event) {
-        if (event.screen instanceof RealmsScreen && resourceLocation != null &&
+        if (event.screen instanceof OptionsScreen && resourceLocation != null &&
                 MediaPlayerHandler.getInstance().getMediaPlayer(resourceLocation) instanceof MediaPlayerBase mediaPlayer) {
                 if (!init) {
                     mediaPlayer.api().controls().play();
