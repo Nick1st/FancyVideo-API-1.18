@@ -26,6 +26,7 @@
 package nick1st.fancyvideo.example;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.datafixers.kinds.Const;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.renderer.GameRenderer;
@@ -66,6 +67,8 @@ public class APIExample {
 
                 RenderSystem.setShader(GameRenderer::getPositionTexShader);
                 RenderSystem.setShaderTexture(0, mediaPlayer.renderToResourceLocation());
+
+                //Constants.LOG.info("draw() call recorded");
 
                 RenderSystem.enableBlend();
                 RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);

@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 
 public record Constants() {
     //DLL Version
-    public static final int DLL_VERSION = 0;
+    public static final int DLL_VERSION = 1;
     public static final String PLUGINSDIR = "plugins/";
 
     // Mod info
@@ -44,7 +44,6 @@ public record Constants() {
 
     // First render Tick
     public static boolean renderTick;
-    public static boolean renderTick2;
 
     // String constants
     public static final String AUDIO_OUTPUT = "audio_output";

@@ -20,6 +20,6 @@ public class DrawBackgroundEvent extends Event {
 
     @Override
     public void onFinished() {
-
+        // I don't need any cleanup
     }
 }
