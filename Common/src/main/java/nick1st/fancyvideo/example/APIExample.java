@@ -26,13 +26,10 @@
 package nick1st.fancyvideo.example;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.datafixers.kinds.Const;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
-import net.minecraft.client.gui.screens.LanguageSelectScreen;
 import net.minecraft.client.gui.screens.OptionsScreen;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.realms.RealmsScreen;
 import nick1st.fancyvideo.Constants;
 import nick1st.fancyvideo.api.DynamicResourceLocation;
 import nick1st.fancyvideo.api.MediaPlayerHandler;
