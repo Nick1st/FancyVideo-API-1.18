@@ -48,14 +48,19 @@ public class APIExample {
         Constants.LOG.info("Setting up example media player");
         resourceLocation = new DynamicResourceLocation(Constants.MOD_ID, "example");
         event.handler().registerPlayerOnFreeResLoc(resourceLocation, SimpleMediaPlayer.class);
-        event.handler().getMediaPlayer(resourceLocation).api().media().prepare("https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4");
-        event.handler().getMediaPlayer(resourceLocation).api().audio().setVolume(200);
+        if (event.handler().getMediaPlayer(resourceLocation).providesAPI()) {
+            event.handler().getMediaPlayer(resourceLocation).api().media().prepare("https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4");
+            event.handler().getMediaPlayer(resourceLocation).api().audio().setVolume(200);
+        } else {
+            Constants.LOG.warn("Example running in NO_LIBRARY_MODE");
+        }
     }
 
     @FancyVideoEvent
     public void drawBackground(DrawBackgroundEvent event) {
         if (event.screen instanceof OptionsScreen && resourceLocation != null &&
-                MediaPlayerHandler.getInstance().getMediaPlayer(resourceLocation) instanceof MediaPlayerBase mediaPlayer) {
+        MediaPlayerHandler.getInstance().getMediaPlayer(resourceLocation) instanceof MediaPlayerBase mediaPlayer) {
+            if (MediaPlayerHandler.getInstance().getMediaPlayer(resourceLocation).providesAPI()) {
                 if (!init) {
                     mediaPlayer.api().controls().play();
                     init = true;
@@ -67,12 +72,31 @@ public class APIExample {
                 RenderSystem.setShader(GameRenderer::getPositionTexShader);
                 RenderSystem.setShaderTexture(0, mediaPlayer.renderToResourceLocation());
 
-                //Constants.LOG.info("draw() call recorded");
-
                 RenderSystem.enableBlend();
                 RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
                 GuiComponent.blit(event.poseStack, 0, 0, 0.0F, 0.0F, width, height, width, height);
                 RenderSystem.disableBlend();
+            } else {
+                // Generic Render Code for Screens
+                int width = Minecraft.getInstance().screen.width;
+                int height = Minecraft.getInstance().screen.height;
+
+                int width2 = 512;
+
+                if (width <= height) {
+                    width2 = width / 3;
+                } else {
+                    width2 = height / 2;
+                }
+
+                RenderSystem.setShader(GameRenderer::getPositionTexShader);
+                RenderSystem.setShaderTexture(0, new DynamicResourceLocation(Constants.MOD_ID, "fallback"));
+
+                RenderSystem.enableBlend();
+                RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+                GuiComponent.blit(event.poseStack, 0, 0, 0.0F, 0.0F, width, height, width2, width2);
+                RenderSystem.disableBlend();
+            }
         }
     }
 

@@ -70,7 +70,7 @@ public class CommonMainClass {
         Constants.LOG.info("Running on OS: {} {}", Constants.OS, Constants.ARCH);
 
         // Delete mismatched dlls
-        if (config.getAsInt("dllVersion") != Constants.DLL_VERSION) {
+        if (config.getAsInt("dllVersion") != Constants.DLL_VERSION || Constants.DEBUG_NO_LIBRARY_MODE) {
             Constants.LOG.info("DLL Version did change, removing old files...");
             DLLHandler.clearDLL();
             config.properties.setProperty("dllVersion", String.valueOf(Constants.DLL_VERSION));
@@ -140,7 +140,10 @@ public class CommonMainClass {
         try {
             checkVersion();
         } catch (LinkageError e) {
-            throw new NativeLibraryMappingException("Failed to properly initialise the native library", e);
+            Constants.LOG.error("Failed to properly initialise the native library");
+            Constants.LOG.debug("Stacktrace:", e);
+            Constants.NO_LIBRARY_MODE = true;
+            //throw new NativeLibraryMappingException("Failed to properly initialise the native library", e);
         }
         return nativeLibraryPath;
     }

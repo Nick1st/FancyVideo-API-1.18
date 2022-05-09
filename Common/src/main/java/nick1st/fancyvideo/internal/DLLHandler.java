@@ -38,13 +38,17 @@ public class DLLHandler {
         try {
             new File(LibraryMapping.libVLC.getByOS(Constants.OS)).delete();
             new File(LibraryMapping.libVLCCore.getByOS(Constants.OS)).delete();
-            FileUtils.deleteDirectory(new File("plugins"));
+            FileUtils.deleteDirectory(new File(PLUGINSDIR));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     public static boolean unpack(ClassLoader loader) {
+        if (Constants.DEBUG_NO_LIBRARY_MODE) {
+            Constants.LOG.warn("Debugging NO_LIBRARY_MODE; VLC will be unavailable.");
+            return false;
+        }
         // Check if we package this os and arch
         String path = "vlc-bin/" + Constants.OS + "/" + Constants.ARCH + "/";
         Constants.LOG.debug(path);

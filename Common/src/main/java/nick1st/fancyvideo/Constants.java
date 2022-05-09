@@ -49,4 +49,8 @@ public record Constants() {
     public static final String AUDIO_OUTPUT = "audio_output";
     public static final String VIDEO_FILTER = "video_filter";
     public static final String ACCESS = "access";
+
+    // No_Library_Mode
+    public static boolean NO_LIBRARY_MODE;
+    public static final boolean DEBUG_NO_LIBRARY_MODE = true;
 }

@@ -65,9 +65,10 @@ public final class MediaPlayerHandler { // TODO NO_LIBRARY Mode
     private final Map<DynamicResourceLocation, AbstractMediaPlayer> playerRegistry = new HashMap<>();
     private final List<DynamicResourceLocation> markedRelease = new ArrayList<>();
 
-    private final MediaPlayerFactory factory = new MediaPlayerFactory("--no-metadata-network-access", "--file-logging", "--logfile", "logs/vlc.log", "--logmode", "text", "--verbose", "2", "--no-quiet");
+    private final MediaPlayerFactory factory;
 
-    private MediaPlayerHandler() {
+    private MediaPlayerHandler(MediaPlayerFactory factory) {
+        this.factory = factory;
     }
 
     /**
@@ -76,7 +77,11 @@ public final class MediaPlayerHandler { // TODO NO_LIBRARY Mode
      */
     public static synchronized MediaPlayerHandler getInstance() {
         if (MediaPlayerHandler.instance == null) {
-            MediaPlayerHandler.instance = new MediaPlayerHandler();
+            if (Constants.NO_LIBRARY_MODE) {
+                MediaPlayerHandler.instance = new MediaPlayerHandler(null);
+            } else {
+                MediaPlayerHandler.instance = new MediaPlayerHandler(new MediaPlayerFactory("--no-metadata-network-access", "--file-logging", "--logfile", "logs/vlc.log", "--logmode", "text", "--verbose", "2", "--no-quiet"));
+            }
         }
         return MediaPlayerHandler.instance;
     }
@@ -239,7 +244,9 @@ public final class MediaPlayerHandler { // TODO NO_LIBRARY Mode
         Constants.LOG.info("Running shutdown step 1 finished");
         playerRegistry.clear();
         Constants.LOG.info("Running shutdown step 2 finished");
-        factory.release();
+        if (factory != null) {
+            factory.release();
+        }
         Constants.LOG.info("Running shutdown completely finished");
     }
 }

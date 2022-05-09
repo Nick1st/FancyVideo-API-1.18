@@ -54,7 +54,11 @@ public class SimpleMediaPlayer extends MediaPlayerBase {
 
     public SimpleMediaPlayer(DynamicResourceLocation resourceLocation) {
         super(resourceLocation);
-        mediaPlayerComponent = new CallbackMediaListPlayerComponent(MediaPlayerHandler.getInstance().getFactory(), null, null, true, null, callback, new DefaultBufferFormatCallback(this), null);
+        if (Constants.NO_LIBRARY_MODE) {
+            mediaPlayerComponent = null;
+        } else {
+            mediaPlayerComponent = new CallbackMediaListPlayerComponent(MediaPlayerHandler.getInstance().getFactory(), null, null, true, null, callback, new DefaultBufferFormatCallback(this), null);
+        }
     }
 
     /**
@@ -63,7 +67,7 @@ public class SimpleMediaPlayer extends MediaPlayerBase {
      */
     @Override
     public EmbeddedMediaPlayer api() {
-        return mediaPlayerComponent.mediaPlayer();
+        return Constants.NO_LIBRARY_MODE ? null : mediaPlayerComponent.mediaPlayer();
     }
 
     @Override
@@ -75,10 +79,12 @@ public class SimpleMediaPlayer extends MediaPlayerBase {
     @Override
     public void cleanup() {
         if (Constants.LOG.isDebugEnabled()) {
-            Constants.LOG.debug("Removing Player {}", dynamicResourceLocation.toWorkingString());
+            Constants.LOG.debug("Removing Player '{}'", dynamicResourceLocation.toWorkingString());
         }
-        mediaPlayerComponent.mediaPlayer().controls().stop();
-        mediaPlayerComponent.release();
+        if (providesAPI()) {
+            mediaPlayerComponent.mediaPlayer().controls().stop();
+            mediaPlayerComponent.release();
+        }
     }
 
     /**
@@ -181,5 +187,10 @@ public class SimpleMediaPlayer extends MediaPlayerBase {
         });
         dynamicTexture.setPixels(image);
         return dynamicResourceLocation;
+    }
+
+    @Override
+    public boolean providesAPI() {
+        return mediaPlayerComponent != null;
     }
 }

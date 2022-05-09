@@ -56,4 +56,13 @@ public abstract class AbstractMediaPlayer { //NOSONAR
      * @since 0.2.0.0
      */
     public abstract void cleanup();
+
+    /**
+     * Template methode. <br>
+     * If your Player provides an {@link EmbeddedMediaPlayer} this <b>must</b> return true.
+     * @return True if the player provides the EmbeddedMediaPlayer API, false otherwise
+     */
+    public boolean providesAPI() {
+        return false;
+    }
 }

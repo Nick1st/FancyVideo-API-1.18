@@ -14,7 +14,7 @@
     },
   
     "license": "GNU GPL 3.0",
-    "icon": "assets/modid/icon.png",
+    "icon": "fancyvideo-api.png",
   
     "environment": "client",
     "entrypoints": {
