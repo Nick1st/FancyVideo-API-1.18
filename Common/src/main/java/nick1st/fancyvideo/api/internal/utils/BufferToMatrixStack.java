@@ -40,6 +40,7 @@ import java.io.IOException;
  * @since 0.0.0.0
  */
 @SuppressWarnings("unused")
+@Deprecated
 public class BufferToMatrixStack {
     public final Matrix4f matrix4f;
     public final BufferBuilder bb;

@@ -1,6 +1,8 @@
 package nick1st.fancyvideo.internal;
 
-import com.mojang.blaze3d.vertex.*;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.math.Matrix4f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.Mth;
@@ -11,12 +13,12 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.FloatBuffer;
 
 public class Util {
     public static int[] extractBytes(String imageName, ClassLoader loader) {
         try (InputStream in = loader.getResourceAsStream(imageName)){
             if (in == null) {
+                Constants.LOG.info("FindMe", new IOException("Resource not found."));
                 throw new IOException("Resource not found.");
             }
             BufferedImage bufferedImage = ImageIO.read(in);
