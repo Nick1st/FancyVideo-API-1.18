@@ -177,13 +177,7 @@ public class SimpleMediaPlayer extends MediaPlayerBase {
         IntStream.range(0, frame.length).forEach(index -> {
             int x = index % width;
             int y = index / width;
-
-            int color = frame[index];
-            color <<= 8;
-            color |= 0xFF;
-            color = Integer.reverseBytes(color);
-
-            image.setPixelRGBA(x, y, color);
+            image.setPixelRGBA(x, y, frame[index]);
         });
         dynamicTexture.setPixels(image);
         return dynamicResourceLocation;

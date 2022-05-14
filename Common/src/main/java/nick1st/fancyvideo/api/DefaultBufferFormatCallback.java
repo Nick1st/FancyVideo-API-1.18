@@ -48,6 +48,25 @@ public class DefaultBufferFormatCallback extends BufferFormatCallbackAdapter {
     public BufferFormat getBufferFormat(int sourceWidth, int sourceHeight) {
         Constants.LOG.info("Dimensions of player {}: {} | {}", mediaPlayerBase.dynamicResourceLocation, sourceWidth, sourceHeight);
         mediaPlayerBase.callback.setBuffer(new AdvancedFrame(new int[sourceWidth * sourceHeight], sourceWidth));
-        return new RV32BufferFormat(sourceWidth, sourceHeight);
+        return new RGBABufferFormat(sourceWidth, sourceHeight);
+    }
+
+    /**
+     * Implementation of a buffer format for RGB.
+     * <p>
+     * RV32 is a 24-bit BGR format with 8-bit of padding (no alpha) in a single plane.
+     */
+    public class RGBABufferFormat extends BufferFormat {
+
+        /**
+         * Creates a RGBA buffer format with the given width and height.
+         *
+         * @param width width of the buffer
+         * @param height height of the buffer
+         */
+        public RGBABufferFormat(int width, int height) {
+            super("RGBA", width, height, new int[] {width * 4}, new int[] {height});
+        }
+
     }
 }
