@@ -26,7 +26,6 @@
 package nick1st.fancyvideo.api; //NOSONAR
 
 import nick1st.fancyvideo.Constants;
-import nick1st.fancyvideo.api.internal.AdvancedFrame;
 import nick1st.fancyvideo.api.mediaPlayer.MediaPlayerBase;
 import uk.co.caprica.vlcj.player.embedded.videosurface.callback.BufferFormat;
 import uk.co.caprica.vlcj.player.embedded.videosurface.callback.BufferFormatCallbackAdapter;
@@ -46,7 +45,8 @@ public class DefaultBufferFormatCallback extends BufferFormatCallbackAdapter {
     @Override
     public BufferFormat getBufferFormat(int sourceWidth, int sourceHeight) {
         Constants.LOG.info("Dimensions of player {}: {} | {}", mediaPlayerBase.dynamicResourceLocation, sourceWidth, sourceHeight);
-        mediaPlayerBase.callback.setBuffer(new AdvancedFrame(new int[sourceWidth * sourceHeight], sourceWidth));
+        //mediaPlayerBase.callback.setBuffer(new AdvancedFrame(new int[sourceWidth * sourceHeight], sourceWidth));
+        mediaPlayerBase.callback.setBuffer(sourceWidth, sourceHeight);
         return new RGBABufferFormat(sourceWidth, sourceHeight);
     }
 

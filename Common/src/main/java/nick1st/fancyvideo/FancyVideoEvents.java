@@ -22,9 +22,9 @@ public record FancyVideoEvents() {
         //SimpleTextRenderer.getInstance().drawString("Test", 0, 1.0F, 5);
 
         IntegerBuffer2D testBuffer = new IntegerBuffer2D(10, 10);
-        testBuffer.fill(100);
+        testBuffer.fill(100, false);
         IntegerBuffer2D testBuffer2 = new IntegerBuffer2D(8, 8);
-        testBuffer2.fill(50);
-        testBuffer.bulkPut(testBuffer2, 1, 1);
+        testBuffer2.fill(50, false);
+        testBuffer.bulkPut(testBuffer2, 1, 1, true);
     }
 }

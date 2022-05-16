@@ -81,7 +81,7 @@ public class APIExample {
                 int width = Minecraft.getInstance().screen.width;
                 int height = Minecraft.getInstance().screen.height;
 
-                int width2 = 512;
+                int width2;
 
                 if (width <= height) {
                     width2 = width / 3;

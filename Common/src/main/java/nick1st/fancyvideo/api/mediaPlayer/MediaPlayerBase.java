@@ -33,6 +33,7 @@ import nick1st.fancyvideo.api.DynamicResourceLocation;
 import nick1st.fancyvideo.api.internal.AdvancedFrame;
 import nick1st.fancyvideo.api.internal.MediaPlayerCallback;
 import nick1st.fancyvideo.api.internal.SelfCleaningDynamicTexture;
+import nick1st.fancyvideo.api.internal.utils.IntegerBuffer2D;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 
 /**
@@ -127,7 +128,18 @@ public class MediaPlayerBase extends AbstractMediaPlayer {
      *
      * @since 0.2.0.0
      */
+    @Deprecated
     public void setAdvancedFrame(AdvancedFrame in) {
+        // Template methode.
+    }
+
+    /**
+     * Template methode. <br>
+     * Invoked by the callback to set a new frame. Should only be used by the callback, or if you want to inject custom frames.
+     *
+     * @since 0.2.0.0
+     */
+    public void setIntBuffer(IntegerBuffer2D in) {
         // Template methode.
     }
 

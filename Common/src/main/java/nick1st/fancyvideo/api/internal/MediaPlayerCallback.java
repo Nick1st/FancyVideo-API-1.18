@@ -25,6 +25,7 @@
 
 package nick1st.fancyvideo.api.internal; //NOSONAR
 
+import nick1st.fancyvideo.api.internal.utils.IntegerBuffer2D;
 import nick1st.fancyvideo.api.mediaPlayer.MediaPlayerBase;
 import uk.co.caprica.vlcj.player.embedded.videosurface.callback.RenderCallbackAdapter;
 
@@ -42,13 +43,20 @@ public class MediaPlayerCallback extends RenderCallbackAdapter {
         this.mediaPlayer = mediaPlayer;
     }
 
+    @Deprecated
     public void setBuffer(AdvancedFrame buffer) {
         this.width = buffer.getWidth();
         setBuffer(buffer.getFrame());
     }
 
+    public void setBuffer(int sourceWidth, int sourceHeight) {
+        this.width = sourceWidth;
+        setBuffer(new int[sourceWidth * sourceHeight]);
+    }
+
     @Override
     protected void onDisplay(uk.co.caprica.vlcj.player.base.MediaPlayer mediaPlayer, int[] buffer) {
-        this.mediaPlayer.setAdvancedFrame(new AdvancedFrame(buffer, width));
+        //this.mediaPlayer.setAdvancedFrame(new AdvancedFrame(buffer, width));
+        this.mediaPlayer.setIntBuffer(new IntegerBuffer2D(width, buffer));
     }
 }
