@@ -52,5 +52,5 @@ public record Constants() {
 
     // No_Library_Mode
     public static boolean NO_LIBRARY_MODE;
-    public static final boolean DEBUG_NO_LIBRARY_MODE = true;
+    public static final boolean DEBUG_NO_LIBRARY_MODE = false;
 }

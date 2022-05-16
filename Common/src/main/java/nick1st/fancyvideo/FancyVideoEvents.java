@@ -19,10 +19,12 @@ public record FancyVideoEvents() {
         ((SimpleMediaPlayer) event.handler().getMediaPlayer(fallback)).setAdvancedFrame(Util.injectableTextureFromJar("VLCMissing.png", FancyVideoEvent.class.getClassLoader(), 1024));
         //((SimpleMediaPlayer) event.handler().getMediaPlayer(fallback)).setAdvancedFrame(Util.injectableTextureFromJar("assets/minecraft/textures/font/ascii.png", FancyVideoEvent.class.getClassLoader(), 128));
         ((SimpleMediaPlayer) event.handler().getMediaPlayer(fallback)).renderToResourceLocation();
-
         //SimpleTextRenderer.getInstance().drawString("Test", 0, 1.0F, 5);
 
         IntegerBuffer2D testBuffer = new IntegerBuffer2D(10, 10);
         testBuffer.fill(100);
+        IntegerBuffer2D testBuffer2 = new IntegerBuffer2D(8, 8);
+        testBuffer2.fill(50);
+        testBuffer.bulkPut(testBuffer2, 1, 1);
     }
 }

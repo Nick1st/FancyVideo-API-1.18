@@ -30,7 +30,6 @@ import nick1st.fancyvideo.api.internal.AdvancedFrame;
 import nick1st.fancyvideo.api.mediaPlayer.MediaPlayerBase;
 import uk.co.caprica.vlcj.player.embedded.videosurface.callback.BufferFormat;
 import uk.co.caprica.vlcj.player.embedded.videosurface.callback.BufferFormatCallbackAdapter;
-import uk.co.caprica.vlcj.player.embedded.videosurface.callback.format.RV32BufferFormat;
 
 /**
  * Default implementation of a buffer format callback that returns a buffer format suitable for rendering RGB frames.
@@ -54,12 +53,12 @@ public class DefaultBufferFormatCallback extends BufferFormatCallbackAdapter {
     /**
      * Implementation of a buffer format for RGB.
      * <p>
-     * RV32 is a 24-bit BGR format with 8-bit of padding (no alpha) in a single plane.
+     * RGBA is a 32-bit RGBA format in a single plane.
      */
-    public class RGBABufferFormat extends BufferFormat {
+    public static class RGBABufferFormat extends BufferFormat {
 
         /**
-         * Creates a RGBA buffer format with the given width and height.
+         * Creates an RGBA buffer format with the given width and height.
          *
          * @param width width of the buffer
          * @param height height of the buffer
