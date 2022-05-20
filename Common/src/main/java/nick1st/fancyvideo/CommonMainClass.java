@@ -37,7 +37,6 @@ import nick1st.fancyvideo.internal.DLLHandler;
 import nick1st.fancyvideo.internal.LibraryMapping;
 import org.apache.commons.lang3.SystemUtils;
 import uk.co.caprica.vlcj.binding.RuntimeUtil;
-import uk.co.caprica.vlcj.factory.NativeLibraryMappingException;
 import uk.co.caprica.vlcj.factory.discovery.NativeDiscovery;
 import uk.co.caprica.vlcj.factory.discovery.strategy.NativeDiscoveryStrategy;
 import uk.co.caprica.vlcj.support.version.LibVlcVersion;
@@ -141,7 +140,7 @@ public class CommonMainClass {
             checkVersion();
         } catch (LinkageError e) {
             Constants.LOG.error("Failed to properly initialise the native library");
-            Constants.LOG.debug("Stacktrace:", e);
+            //Constants.LOG.debug("Stacktrace:", e);
             Constants.NO_LIBRARY_MODE = true;
             //throw new NativeLibraryMappingException("Failed to properly initialise the native library", e);
         }

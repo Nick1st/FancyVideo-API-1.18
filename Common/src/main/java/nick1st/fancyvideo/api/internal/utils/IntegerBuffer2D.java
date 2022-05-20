@@ -30,13 +30,41 @@ public class IntegerBuffer2D {
         }
     }
 
+    public void replaceValues(int val1, int rep1, int val2, int rep2) {
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[0].length; j++) {
+                if (matrix[i][j] == val1) {
+                    matrix[i][j] = rep1;
+                } else if (matrix[i][j] == val2) {
+                    matrix[i][j] = rep2;
+                }
+            }
+
+        }
+    }
+
+    public void scale(int size) {
+        IntegerBuffer2D temp = new IntegerBuffer2D(this);
+        grow(matrix[0].length * (size - 1), matrix.length * (size - 1));
+        for (int i = 0; i < (temp.matrix.length); i++) {
+            for (int j = 0; j < (temp.matrix[0].length); j++) {
+                for (int k = 0; k < size; k++) {
+                    for (int l = 0; l < size; l++) {
+                        matrix[(i*size)+k][(j*size)+l] = temp.matrix[i][j];
+                    }
+                }
+            }
+        }
+    }
+
     public void grow(int sizeToGrowX, int sizeToGrowY) {
         if (sizeToGrowY > 0) {
-            matrix = Arrays.copyOf(matrix, matrix.length +sizeToGrowY);
+            matrix = Arrays.copyOf(matrix, matrix.length + sizeToGrowY);
+            Arrays.fill(matrix, matrix.length - sizeToGrowY, matrix.length, new int[matrix[0].length]);
         }
         if (sizeToGrowX > 0) {
             for (int i = 0; i < matrix.length; i++) {
-                matrix[i] = Arrays.copyOf(matrix[i], matrix[i].length + sizeToGrowY);
+                matrix[i] = Arrays.copyOf(matrix[i], matrix[i].length + sizeToGrowX);
             }
         }
     }
@@ -82,6 +110,54 @@ public class IntegerBuffer2D {
 
     public int get(int x, int y) {
         return matrix[y][x];
+    }
+
+    public IntegerBuffer2D bulkGet(int x, int y, int sizeX, int sizeY) {
+        IntegerBuffer2D temp = new IntegerBuffer2D(sizeX, sizeY);
+        for (int i = 0; i < sizeY; i++) {
+            System.arraycopy(matrix[i + y], x, temp.matrix[i], 0, sizeX);
+        }
+        return temp;
+    }
+
+    /**
+     *
+     * @param toJoin
+     * @param side Only accepts 0 or 1. 0 for left, 1 for bottom.
+     * @return
+     */
+    public static IntegerBuffer2D join(IntegerBuffer2D[] toJoin, short side) {
+        if (side != 0 && side != 1) {
+            throw new IllegalArgumentException("Side only allows 0 or 1");
+        }
+        int totalWidth = 0;
+        int totalHeight = 0;
+
+        for (IntegerBuffer2D buffer: toJoin) {
+            if (side == 0) {
+                totalHeight = Math.max(buffer.getHeight(), totalHeight);
+                totalWidth += buffer.getWidth();
+            } else {
+                totalWidth = Math.max(buffer.getWidth(), totalWidth);
+                totalHeight += buffer.getHeight();
+            }
+        }
+
+        IntegerBuffer2D toReturn = new IntegerBuffer2D(totalWidth, totalHeight);
+
+        int i = 0;
+
+        for (IntegerBuffer2D buffer: toJoin) {
+            if (side == 0) {
+                toReturn.bulkPut(buffer, i,0, false);
+                i += buffer.getWidth();
+            } else {
+                toReturn.bulkPut(buffer, 0,i, false);
+                i += buffer.getHeight();
+            }
+        }
+
+        return toReturn;
     }
 
     public void fill(int value, boolean onlyZeros) {

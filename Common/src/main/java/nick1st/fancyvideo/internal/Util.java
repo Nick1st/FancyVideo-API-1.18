@@ -8,6 +8,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.util.Mth;
 import nick1st.fancyvideo.Constants;
 import nick1st.fancyvideo.api.internal.AdvancedFrame;
+import nick1st.fancyvideo.api.internal.utils.IntegerBuffer2D;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -22,12 +23,18 @@ public class Util {
                 throw new IOException("Resource not found.");
             }
             BufferedImage bufferedImage = ImageIO.read(in);
+//            BufferedImage newImage = new BufferedImage(bufferedImage.getWidth(), bufferedImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
+//
+//            Graphics2D g = newImage.createGraphics();
+//            g.drawImage(bufferedImage, 0, 0, bufferedImage.getWidth(), bufferedImage.getHeight(), null);
+//            g.dispose();
 
             int[] image = new int[bufferedImage.getHeight() * bufferedImage.getWidth()];
             int k = 0;
             for (int i = 0; i < bufferedImage.getHeight(); i++) {
                 for (int j = 0; j < bufferedImage.getWidth(); j++) {
-                    image[k] = bufferedImage.getRGB(j, i);
+                    //image[k] = Integer.rotateLeft(color, 8);
+                    image[k] = Integer.reverseBytes(Integer.rotateLeft(bufferedImage.getRGB(j, i), 8));
                     k++;
                 }
             }
@@ -37,8 +44,8 @@ public class Util {
         }
     }
 
-    public static AdvancedFrame injectableTextureFromJar(String imagePathInJar, ClassLoader loader, int width) {
-        return new AdvancedFrame(extractBytes(imagePathInJar, loader), width);
+    public static IntegerBuffer2D injectableTextureFromJar(String imagePathInJar, ClassLoader loader, int width) {
+        return new IntegerBuffer2D(width, extractBytes(imagePathInJar, loader));
     }
 
     public static AdvancedFrame drawFontToFrame(AdvancedFrame in) {
