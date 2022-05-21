@@ -9,6 +9,9 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class Util {
+
+    private Util() {}
+
     public static int[] extractBytes(String imageName, ClassLoader loader) {
         try (InputStream in = loader.getResourceAsStream(imageName)){
             if (in == null) {
@@ -21,7 +24,6 @@ public class Util {
             int k = 0;
             for (int i = 0; i < bufferedImage.getHeight(); i++) {
                 for (int j = 0; j < bufferedImage.getWidth(); j++) {
-                    //image[k] = Integer.rotateLeft(color, 8);
                     image[k] = Integer.reverseBytes(Integer.rotateLeft(bufferedImage.getRGB(j, i), 8));
                     k++;
                 }

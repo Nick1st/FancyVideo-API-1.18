@@ -59,7 +59,8 @@ public enum LibraryMapping {
     libVMem("video_output", "libvmem_plugin"),
 
     // video_chroma
-    libI420RGB("video_chroma", "libi420_rgb_plugin"),
+    //libI420RGB("video_chroma", "libi420_rgb_plugin"),
+    libSWScale("video_chroma", "libswscale_plugin"),
 
     // access
     libFilesystem(Constants.ACCESS, "libfilesystem_plugin"),

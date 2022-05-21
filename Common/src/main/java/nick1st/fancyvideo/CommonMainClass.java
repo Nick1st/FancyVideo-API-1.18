@@ -140,9 +140,8 @@ public class CommonMainClass {
             checkVersion();
         } catch (LinkageError e) {
             Constants.LOG.error("Failed to properly initialise the native library");
-            //Constants.LOG.debug("Stacktrace:", e);
+            Constants.LOG.trace("Stacktrace:", e);
             Constants.NO_LIBRARY_MODE = true;
-            //throw new NativeLibraryMappingException("Failed to properly initialise the native library", e);
         }
         return nativeLibraryPath;
     }

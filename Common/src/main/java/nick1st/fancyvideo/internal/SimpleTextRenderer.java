@@ -151,7 +151,7 @@ public class SimpleTextRenderer {
         IntegerBuffer2D toReturn = new IntegerBuffer2D(sizeX, sizeY);
         int startY = 0;
         for (int i = 0; i < lines.size(); i++) {
-            IntegerBuffer2D buffer = getInstance().drawString(lines.get(i), -1, Math.min(sizeX / optimalWidthPerLine, (sizeY / lines.size()) / oneLineHeight));
+            IntegerBuffer2D buffer = getInstance().drawString(lines.get(i), color, Math.min(sizeX / optimalWidthPerLine, (sizeY / lines.size()) / oneLineHeight));
             toReturn.bulkPut(buffer, (sizeX - buffer.getWidth()) / 2, startY, true);
             startY += buffer.getHeight();
         }

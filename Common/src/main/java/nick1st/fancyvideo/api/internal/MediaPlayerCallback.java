@@ -50,7 +50,6 @@ public class MediaPlayerCallback extends RenderCallbackAdapter {
 
     @Override
     protected void onDisplay(uk.co.caprica.vlcj.player.base.MediaPlayer mediaPlayer, int[] buffer) {
-        //this.mediaPlayer.setAdvancedFrame(new AdvancedFrame(buffer, width));
         this.mediaPlayer.setIntBuffer(new IntegerBuffer2D(width, buffer));
     }
 }

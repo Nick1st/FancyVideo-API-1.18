@@ -123,6 +123,15 @@ public class MediaPlayerBase extends AbstractMediaPlayer {
 
     /**
      * Template methode. <br>
+     *
+     * @since 0.2.0.0
+     */
+    public IntegerBuffer2D getIntBuffer() {
+        return new IntegerBuffer2D(1, 1);
+    }
+
+    /**
+     * Template methode. <br>
      * Renders the current frame to a {@link ResourceLocation} for further use.
      *
      * @return The {@link ResourceLocation} rendered to.

@@ -152,13 +152,6 @@ public class IntegerBuffer2D {
     }
 
     public void fill(int value, boolean onlyZeros) {
-//        for (int i = 0; i < banks.length; i++) {
-//            for (int j = 0; j < banks[0].array().length; j++) {
-//                if (banks[i].get(j) == 0) {
-//                    banks[i].put(j, value);
-//                }
-//            }
-//        }
         for (int i = 0; i < matrix.length; i++) {
             for (int j = 0; j < matrix[0].length; j++) {
                 if (!onlyZeros || matrix[i][j] == 0) {

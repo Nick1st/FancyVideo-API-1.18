@@ -45,7 +45,6 @@ public class DefaultBufferFormatCallback extends BufferFormatCallbackAdapter {
     @Override
     public BufferFormat getBufferFormat(int sourceWidth, int sourceHeight) {
         Constants.LOG.info("Dimensions of player {}: {} | {}", mediaPlayerBase.dynamicResourceLocation, sourceWidth, sourceHeight);
-        //mediaPlayerBase.callback.setBuffer(new AdvancedFrame(new int[sourceWidth * sourceHeight], sourceWidth));
         mediaPlayerBase.callback.setBuffer(sourceWidth, sourceHeight);
         return new RGBABufferFormat(sourceWidth, sourceHeight);
     }

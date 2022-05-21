@@ -49,7 +49,6 @@ public class SimpleMediaPlayer extends MediaPlayerBase {
     protected final Semaphore semaphore = new Semaphore(1, true);
     // MediaPlayerCallback
     protected CallbackMediaPlayerComponent mediaPlayerComponent;
-    //protected AdvancedFrame videoFrame = new AdvancedFrame(new int[0], 0);
     protected IntegerBuffer2D videoFrame = new IntegerBuffer2D(1, 1);
 
     public SimpleMediaPlayer(DynamicResourceLocation resourceLocation) {
@@ -97,7 +96,6 @@ public class SimpleMediaPlayer extends MediaPlayerBase {
     public int[] getIntFrame() {
         try {
             semaphore.acquire();
-            //AdvancedFrame advancedFrame = new AdvancedFrame(videoFrame);
             IntegerBuffer2D temp = new IntegerBuffer2D(videoFrame);
             semaphore.release();
             return temp.getArray();
@@ -130,21 +128,6 @@ public class SimpleMediaPlayer extends MediaPlayerBase {
         return width;
     }
 
-//    @Override
-//    @Deprecated
-//    public AdvancedFrame getAdvancedFrame() {
-//        try {
-//            semaphore.acquire();
-//            AdvancedFrame currentFrame = new AdvancedFrame(videoFrame);
-//            semaphore.release();
-//            return currentFrame;
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//            Thread.currentThread().interrupt();
-//        }
-//        return super.getAdvancedFrame();
-//    }
-
     public IntegerBuffer2D getIntBuffer() {
         try {
             semaphore.acquire();
@@ -155,7 +138,7 @@ public class SimpleMediaPlayer extends MediaPlayerBase {
             e.printStackTrace();
             Thread.currentThread().interrupt();
         }
-        return new IntegerBuffer2D(1, 1); // TODO: Replace with `super.()`
+        return super.getIntBuffer();
     }
 
     @Override
@@ -163,7 +146,6 @@ public class SimpleMediaPlayer extends MediaPlayerBase {
         try {
             semaphore.acquire();
             videoFrame = new IntegerBuffer2D(in);
-            //videoFrame = new AdvancedFrame(in);
             semaphore.release();
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -173,20 +155,11 @@ public class SimpleMediaPlayer extends MediaPlayerBase {
 
     @Override
     public DynamicResourceLocation renderToResourceLocation() {
-        //AdvancedFrame frameAdvanced = getAdvancedFrame();
         IntegerBuffer2D buffer2D = getIntBuffer();
-        //int[] frame = frameAdvanced.getFrame();
-        //int width = frameAdvanced.getWidth();
         int width = buffer2D.getWidth();
         if (width == 0) {
             return dynamicResourceLocation;
         }
-        //image = new NativeImage(width, frame.length / width, true);
-        //IntStream.range(0, frame.length).forEach(index -> {
-        //    int x = index % width;
-        //    int y = index / width;
-        //    image.setPixelRGBA(x, y, frame[index]);
-        //});
         image = new NativeImage(width, buffer2D.getHeight(), true);
         for (int i = 0; i < buffer2D.getHeight(); i++) {
             for (int j = 0; j < width; j++) {

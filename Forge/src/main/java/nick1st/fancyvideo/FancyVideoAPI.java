@@ -30,7 +30,6 @@ import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.EventSubclassTransformer;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.IExtensionPoint;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
@@ -53,9 +52,6 @@ public class FancyVideoAPI {
     // Common Class Holder
     private CommonMainClass commonClass;
 
-    // Example Holder
-    //private Example example;
-
     public FancyVideoAPI() {
         // Client only
         ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class, ()-> new IExtensionPoint.DisplayTest(() -> "ANY", (a, b) -> true));
@@ -77,7 +73,6 @@ public class FancyVideoAPI {
                     if (event.getMessage() != null && event.getThrown() != null && event.getMarker() != null) {
                         if (event.getMarker().getName().equals("EVENTBUS") && event.getMessage().getFormattedMessage().equals("An error occurred building event handler")) {
                             if (Arrays.stream(event.getThrown().getStackTrace()).anyMatch(sTE -> sTE.getClassName().startsWith("uk.co.caprica.vlcj."))) {
-                                // LOGGER.fatal("This is nice");
                                 return Result.DENY;
                             }
                         }

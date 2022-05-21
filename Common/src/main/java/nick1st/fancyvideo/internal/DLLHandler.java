@@ -34,6 +34,9 @@ import java.io.*;
 import static nick1st.fancyvideo.Constants.PLUGINSDIR;
 
 public class DLLHandler {
+
+    private DLLHandler() {}
+
     public static void clearDLL() {
         try {
             new File(LibraryMapping.libVLC.getByOS(Constants.OS)).delete();

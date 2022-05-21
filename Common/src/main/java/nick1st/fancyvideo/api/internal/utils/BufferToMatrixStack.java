@@ -38,9 +38,11 @@ import java.io.IOException;
  * Provides some legacy code for the (currently) broken renderToMatrixStack method.
  *
  * @since 0.0.0.0
+ *
+ * @deprecated (All methods inside this class are unchecked, expect them to break in every possible way)
  */
 @SuppressWarnings("unused")
-@Deprecated
+@Deprecated(since = "0.2.0.0")
 public class BufferToMatrixStack {
     public final Matrix4f matrix4f;
     public final BufferBuilder bb;
@@ -52,7 +54,7 @@ public class BufferToMatrixStack {
         // Required for transparency
         RenderSystem.defaultBlendFunc();
         RenderSystem.enableBlend();
-        bb.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR); //TODO Validate that VertexFormat.Mode.QUADS matches vertex mode 7
+        bb.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
     }
 
     public BufferToMatrixStack(PoseStack matrix, Tesselator tesselator) {

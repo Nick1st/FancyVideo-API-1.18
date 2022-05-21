@@ -57,7 +57,7 @@ import java.util.Map;
  * @since 0.2.0.0
  */
 @SuppressWarnings("unused")
-public final class MediaPlayerHandler { // TODO NO_LIBRARY Mode
+public final class MediaPlayerHandler {
 
     private static MediaPlayerHandler instance;
 

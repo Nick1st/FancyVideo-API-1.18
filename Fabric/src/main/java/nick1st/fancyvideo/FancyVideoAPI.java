@@ -34,11 +34,9 @@ public class FancyVideoAPI implements ModInitializer {
 
     public void firstRenderTick() {
         // Ensure this only runs on the client (Not sure if this is required)
-        if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
-            if (!Constants.renderTick) {
-                commonClass.apiSetup();
-                Constants.renderTick = true;
-            }
+        if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT && !Constants.renderTick) {
+            commonClass.apiSetup();
+            Constants.renderTick = true;
         }
     }
 
