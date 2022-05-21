@@ -23,11 +23,6 @@ public class Util {
                 throw new IOException("Resource not found.");
             }
             BufferedImage bufferedImage = ImageIO.read(in);
-//            BufferedImage newImage = new BufferedImage(bufferedImage.getWidth(), bufferedImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
-//
-//            Graphics2D g = newImage.createGraphics();
-//            g.drawImage(bufferedImage, 0, 0, bufferedImage.getWidth(), bufferedImage.getHeight(), null);
-//            g.dispose();
 
             int[] image = new int[bufferedImage.getHeight() * bufferedImage.getWidth()];
             int k = 0;

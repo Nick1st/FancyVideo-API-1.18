@@ -1,15 +1,16 @@
 package nick1st.fancyvideo.internal;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import nick1st.fancyvideo.api.internal.utils.IntegerBuffer2D;
-import org.lwjgl.system.CallbackI;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * <b>This is not yet production ready. Use with caution.</b>
+ */
 public class SimpleTextRenderer {
 
     private static SimpleTextRenderer instance;
@@ -82,21 +83,16 @@ public class SimpleTextRenderer {
         return temp;
     }
 
-    public static void drawStringWithShadow(PoseStack matrix, String text, int x, int y, int rgbColor, float alpha, float scale) {
+    //public static void drawStringWithShadow(PoseStack matrix, String text, int x, int y, int rgbColor, float alpha, float scale) { //TODO reimplement this
         //draw shadow
         //drawString(matrix, text, x + Math.max((int)(1 * scale), 1), y + Math.max((int)(1 * scale), 1), 0, alpha / 2.0F, scale);
         //draw normal text
         //drawString(matrix, text, x, y, rgbColor, alpha, scale);
-    }
+    //}
 
     public static int getStringWidth(String text) {
         int length = 0;
         for (char c : text.toCharArray()) {
-//            int i = 6;
-//            if (CHARACTER_X_OFFSET.containsKey(c)) {
-//                i += CHARACTER_X_OFFSET.get(c);
-//            }
-//            length += i;
             length += CHARACTER_X_OFFSET.containsKey(c) ? 8 - CHARACTER_X_OFFSET.get(c) : 8;
         }
         return length;
@@ -112,7 +108,16 @@ public class SimpleTextRenderer {
         return 8 + mostHeightOff;
     }
 
-    public static IntegerBuffer2D greatestSizedText(String text, int sizeX, int sizeY) {
+
+    /**
+     * <b>DO NOT USE THIS, IT'S BUGGED AS FUCK</b>
+     * @param text
+     * @param sizeX
+     * @param sizeY
+     * @param color
+     * @return
+     */
+    public static IntegerBuffer2D greatestSizedText(String text, int sizeX, int sizeY, int color) { //TODO Fix the logic @Nick1st
         int oneLineHeight = getStringHeight(text);
         int stringWidth = getStringWidth(text);
         float bestRatioForCalcY = (float) sizeY / sizeX;
@@ -123,8 +128,10 @@ public class SimpleTextRenderer {
             maxLength = Math.max(getStringWidth(word), maxLength);
         }
 
-        int optimalWidthPerLine = Math.max((int) Math.floor(Math.sqrt(((float) sizeX / sizeY) * stringWidth)), maxLength); //TODO add Max(this or longestword)
-        int optimalNumberOfLines = (int) Math.ceil(Math.sqrt(((float) sizeY / sizeX) * stringWidth));
+        //int optimalWidthPerLine = Math.max((int) Math.floor(Math.sqrt(((float) sizeX / sizeY) * stringWidth)), maxLength);
+        //int optimalWidthPerLine = Math.max((int) Math.floor(((float) sizeX / sizeY) * stringWidth), maxLength);
+        int optimalWidthPerLine = Math.max((int) Math.floor(Math.sqrt((float) sizeX / sizeY) * (stringWidth / (float) sizeX / sizeY)), maxLength);
+        int optimalNumberOfLines = (int) Math.floor(Math.sqrt(((float) sizeY / sizeX) * stringWidth)); //Replaced Ceil with floor
 
         List<String> lines = new ArrayList<>();
         StringBuilder currentLine = new StringBuilder();
@@ -140,6 +147,15 @@ public class SimpleTextRenderer {
             }
         }
         lines.add(currentLine.toString());
-        return new IntegerBuffer2D(1, 1);
+
+        IntegerBuffer2D toReturn = new IntegerBuffer2D(sizeX, sizeY);
+        int startY = 0;
+        for (int i = 0; i < lines.size(); i++) {
+            IntegerBuffer2D buffer = getInstance().drawString(lines.get(i), -1, Math.min(sizeX / optimalWidthPerLine, (sizeY / lines.size()) / oneLineHeight));
+            toReturn.bulkPut(buffer, (sizeX - buffer.getWidth()) / 2, startY, true);
+            startY += buffer.getHeight();
+        }
+
+        return toReturn;
     }
 }
