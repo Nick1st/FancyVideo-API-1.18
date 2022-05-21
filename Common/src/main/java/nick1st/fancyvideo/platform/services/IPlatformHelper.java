@@ -23,8 +23,9 @@
  * Copyright 2022 Nick1st.
  */
 
-package nick1st.fancyvideo.platform.services;
+package nick1st.fancyvideo.platform.services; //NOSONAR
 
+@SuppressWarnings("unused")
 public interface IPlatformHelper {
 
     /**

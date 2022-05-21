@@ -23,7 +23,7 @@
  * Copyright 2022 Nick1st.
  */
 
-package nick1st.fancyvideo.config;
+package nick1st.fancyvideo.config; //NOSONAR
 
 import java.util.function.Predicate;
 

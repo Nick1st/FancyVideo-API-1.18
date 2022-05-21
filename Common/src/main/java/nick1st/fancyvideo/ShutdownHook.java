@@ -23,7 +23,7 @@
  * Copyright 2022 Nick1st.
  */
 
-package nick1st.fancyvideo;
+package nick1st.fancyvideo; //NOSONAR
 
 
 import nick1st.fancyvideo.api.MediaPlayerHandler;

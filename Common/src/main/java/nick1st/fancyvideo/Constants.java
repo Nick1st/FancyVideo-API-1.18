@@ -23,14 +23,14 @@
  * Copyright 2022 Nick1st.
  */
 
-package nick1st.fancyvideo;
+package nick1st.fancyvideo; //NOSONAR
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public record Constants() {
     //DLL Version
-    public static final int DLL_VERSION = 1;
+    public static final int DLL_VERSION = 2;
     public static final String PLUGINSDIR = "plugins/";
 
     // Mod info

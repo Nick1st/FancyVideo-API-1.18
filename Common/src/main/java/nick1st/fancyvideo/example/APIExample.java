@@ -23,7 +23,7 @@
  * Copyright 2022 Nick1st.
  */
 
-package nick1st.fancyvideo.example;
+package nick1st.fancyvideo.example; //NOSONAR
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
@@ -44,6 +44,7 @@ public class APIExample {
     DynamicResourceLocation resourceLocation;
 
     @FancyVideoEvent
+    @SuppressWarnings("unused")
     public void init(PlayerRegistryEvent.AddPlayerEvent event) {
         Constants.LOG.info("Setting up example media player");
         resourceLocation = new DynamicResourceLocation(Constants.MOD_ID, "example");
@@ -57,8 +58,9 @@ public class APIExample {
     }
 
     @FancyVideoEvent
+    @SuppressWarnings("unused")
     public void drawBackground(DrawBackgroundEvent event) {
-        if (event.screen instanceof OptionsScreen && resourceLocation != null &&
+        if (event.getScreen() instanceof OptionsScreen && resourceLocation != null &&
         MediaPlayerHandler.getInstance().getMediaPlayer(resourceLocation) instanceof MediaPlayerBase mediaPlayer) {
             if (MediaPlayerHandler.getInstance().getMediaPlayer(resourceLocation).providesAPI()) {
                 if (!init) {
@@ -74,7 +76,7 @@ public class APIExample {
 
                 RenderSystem.enableBlend();
                 RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-                GuiComponent.blit(event.poseStack, 0, 0, 0.0F, 0.0F, width, height, width, height);
+                GuiComponent.blit(event.getPoseStack(), 0, 0, 0.0F, 0.0F, width, height, width, height);
                 RenderSystem.disableBlend();
             } else {
                 // Generic Render Code for Screens
@@ -94,13 +96,14 @@ public class APIExample {
 
                 RenderSystem.enableBlend();
                 RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-                GuiComponent.blit(event.poseStack, 0, 0, 0.0F, 0.0F, width, height, width2, width2);
+                GuiComponent.blit(event.getPoseStack(), 0, 0, 0.0F, 0.0F, width, height, width2, width2);
                 RenderSystem.disableBlend();
             }
         }
     }
 
     @FancyVideoEvent(phase = EventPhase.PRE)
+    @SuppressWarnings("unused")
     public void removePlayer(PlayerRegistryEvent.RemovePlayerEvent event) {
         if (event.resourceLocation == resourceLocation) {
             resourceLocation = null;

@@ -23,7 +23,7 @@
  * Copyright 2022 Nick1st.
  */
 
-package nick1st.fancyvideo;
+package nick1st.fancyvideo; //NOSONAR
 
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ScreenEvent;
@@ -44,6 +44,7 @@ import org.apache.logging.log4j.core.filter.AbstractFilter;
 import java.util.Arrays;
 
 @Mod(Constants.MOD_ID)
+@SuppressWarnings("unused")
 public class FancyVideoAPI {
 
     // Config Holder

@@ -23,9 +23,9 @@
  * Copyright 2022 Nick1st.
  */
 
-package nick1st.fancyvideo.internal;
+package nick1st.fancyvideo.internal; //NOSONAR
 
-import com.sun.jna.Platform;
+import com.sun.jna.Platform; //NOSONAR
 
 public enum Arch {
     x86,

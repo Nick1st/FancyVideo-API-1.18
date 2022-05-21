@@ -1,7 +1,33 @@
-package nick1st.fancyvideo.api.internal.utils;
+/*
+ * This file is part of the FancyVideo-API.
+ *
+ * The FancyVideo-API is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The FancyVideo-API is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * The FancyVideo-API uses VLCJ, Copyright 2009-2021 Caprica Software Limited,
+ * licensed under the GNU General Public License.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with VLCJ.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with FancyVideo-API.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Copyright 2022 Nick1st.
+ */
+
+package nick1st.fancyvideo.api.internal.utils; //NOSONAR
 
 import java.util.Arrays;
 
+@SuppressWarnings("unused")
 public class IntegerBuffer2D {
     int[][] matrix;
 
@@ -9,6 +35,7 @@ public class IntegerBuffer2D {
         matrix = new int[banks][sizeOfBanks];
     }
 
+    @SuppressWarnings("This does copy matrix, but using low-level code")
     public IntegerBuffer2D(IntegerBuffer2D toCopy) {
         this(toCopy.getWidth(), toCopy.getHeight());
         System.arraycopy(toCopy.matrix, 0, matrix, 0, toCopy.getHeight());
@@ -113,9 +140,9 @@ public class IntegerBuffer2D {
 
     /**
      *
-     * @param toJoin
+     * @param toJoin All Arrays that should be joined together.
      * @param side Only accepts 0 or 1. 0 for left, 1 for bottom.
-     * @return
+     * @return A joined buffer
      */
     public static IntegerBuffer2D join(IntegerBuffer2D[] toJoin, short side) {
         if (side != 0 && side != 1) {
