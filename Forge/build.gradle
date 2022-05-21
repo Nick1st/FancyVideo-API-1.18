@@ -99,6 +99,7 @@ processResources {
 
 jar {
     archiveClassifier.set('slim')
+    archiveVersion.set(project.version_main + project.version)
 //    manifest {
 //        attributes([
 //                // Attributes here
@@ -109,6 +110,7 @@ jar {
 
 shadowJar {
     archiveClassifier.set('')
+    archiveVersion.set(project.version_main + project.version)
     configurations = [project.configurations.library]
     finalizedBy 'reobfShadowJar'
     exclude 'META-INF/maven/**'
@@ -128,7 +130,7 @@ publishing {
         mavenJava(MavenPublication) {
             groupId project.group
             artifactId project.archivesBaseName
-            version project.version
+            version project.version_main + project.version
             artifact jar
         }
     }
