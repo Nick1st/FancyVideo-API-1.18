@@ -30,14 +30,12 @@ import nick1st.fancyvideo.Constants;
 import nick1st.fancyvideo.api.DefaultBufferFormatCallback;
 import nick1st.fancyvideo.api.DynamicResourceLocation;
 import nick1st.fancyvideo.api.MediaPlayerHandler;
-import nick1st.fancyvideo.api.internal.AdvancedFrame;
 import nick1st.fancyvideo.api.internal.utils.IntegerBuffer2D;
 import uk.co.caprica.vlcj.player.component.CallbackMediaListPlayerComponent;
 import uk.co.caprica.vlcj.player.component.CallbackMediaPlayerComponent;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 
 import java.util.concurrent.Semaphore;
-import java.util.stream.IntStream;
 
 /**
  * For most use cases this implementation should be enough.
@@ -158,19 +156,6 @@ public class SimpleMediaPlayer extends MediaPlayerBase {
             Thread.currentThread().interrupt();
         }
         return new IntegerBuffer2D(1, 1); // TODO: Replace with `super.()`
-    }
-
-    @Override
-    public void setAdvancedFrame(AdvancedFrame in) {
-        try {
-            semaphore.acquire();
-            videoFrame = new IntegerBuffer2D(in);
-            //videoFrame = new AdvancedFrame(in);
-            semaphore.release();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            Thread.currentThread().interrupt();
-        }
     }
 
     @Override

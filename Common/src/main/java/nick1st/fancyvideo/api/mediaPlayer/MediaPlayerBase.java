@@ -30,7 +30,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import nick1st.fancyvideo.Constants;
 import nick1st.fancyvideo.api.DynamicResourceLocation;
-import nick1st.fancyvideo.api.internal.AdvancedFrame;
 import nick1st.fancyvideo.api.internal.MediaPlayerCallback;
 import nick1st.fancyvideo.api.internal.SelfCleaningDynamicTexture;
 import nick1st.fancyvideo.api.internal.utils.IntegerBuffer2D;
@@ -110,27 +109,6 @@ public class MediaPlayerBase extends AbstractMediaPlayer {
      */
     public int getWidth() {
         return 0; //NOSONAR
-    }
-
-    /**
-     * Get the AdvancedFrame for further reprocessing.
-     *
-     * @since 0.2.0.0
-     */
-    public AdvancedFrame getAdvancedFrame() {
-        // Template methode.
-        return new AdvancedFrame(new int[0], 0);
-    }
-
-    /**
-     * Template methode. <br>
-     * Invoked by the callback to set a new frame. Should only be used by the callback, or if you want to inject custom frames.
-     *
-     * @since 0.2.0.0
-     */
-    @Deprecated
-    public void setAdvancedFrame(AdvancedFrame in) {
-        // Template methode.
     }
 
     /**

@@ -1,7 +1,5 @@
 package nick1st.fancyvideo.api.internal.utils;
 
-import nick1st.fancyvideo.api.internal.AdvancedFrame;
-
 import java.util.Arrays;
 
 public class IntegerBuffer2D {
@@ -20,13 +18,6 @@ public class IntegerBuffer2D {
         this(width, frame.length / width);
         for (int i = 0; i < frame.length / width; i++) {
             System.arraycopy(frame, i * width, matrix[i], 0, width);
-        }
-    }
-
-    public IntegerBuffer2D(AdvancedFrame frame) {
-        this(frame.getWidth(), frame.getFrame().length / frame.getWidth());
-        for (int i = 0; i < frame.getFrame().length / frame.getWidth(); i++) {
-            System.arraycopy(frame.getFrame(), i * frame.getWidth(), matrix[i], 0, frame.getWidth());
         }
     }
 

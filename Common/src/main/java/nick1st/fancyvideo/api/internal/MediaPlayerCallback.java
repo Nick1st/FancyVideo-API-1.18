@@ -43,12 +43,6 @@ public class MediaPlayerCallback extends RenderCallbackAdapter {
         this.mediaPlayer = mediaPlayer;
     }
 
-    @Deprecated
-    public void setBuffer(AdvancedFrame buffer) {
-        this.width = buffer.getWidth();
-        setBuffer(buffer.getFrame());
-    }
-
     public void setBuffer(int sourceWidth, int sourceHeight) {
         this.width = sourceWidth;
         setBuffer(new int[sourceWidth * sourceHeight]);
