@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 
 public record Constants() {
     //DLL Version
-    public static final int DLL_VERSION = 2;
+    public static final int DLL_VERSION = 3;
     public static final String PLUGINSDIR = "plugins/";
 
     // Mod info

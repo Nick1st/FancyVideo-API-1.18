@@ -96,7 +96,7 @@ public class FancyVideoAPI {
         }
     }
 
-    public void drawBackground(ScreenEvent.BackgroundDrawnEvent e) {
+    public void drawBackground(ScreenEvent.BackgroundRendered e) {
         FancyVideoEventBus.getInstance().runEvent(new DrawBackgroundEvent(e.getScreen(), e.getPoseStack()));
     }
 }
