@@ -1,30 +1,35 @@
+//######################################################################################################################
+//                                              Build Plugin Declaration
+//######################################################################################################################
 plugins {
-    id 'fabric-loom' version '0.11-SNAPSHOT'
-    id 'maven-publish'
-    id 'idea'
     id 'com.github.johnrengelman.shadow' version '7.1.2'
+    id 'fabric-loom' version '0.11-SNAPSHOT'
+    id 'idea'
 }
 
-configurations {
-    shadow
-    implementation.extendsFrom shadow
+//######################################################################################################################
+//                                               Artefact Specification
+//######################################################################################################################
+if (minecraft_version_min_fabric != minecraft_version) {
+    archivesBaseName = "${mod_name}-fabric-${minecraft_version_min_fabric}-${minecraft_version}"
+} else {
+    archivesBaseName = "${mod_name}-fabric-${minecraft_version}"
 }
 
-archivesBaseName = "${mod_name}-fabric-${minecraft_version_min}-${minecraft_version}"
-
+//######################################################################################################################
+//                                                Project Dependencies
+//######################################################################################################################
 dependencies {
     minecraft "com.mojang:minecraft:${minecraft_version}"
     mappings loom.officialMojangMappings()
     modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
-    implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
     implementation project(":Common")
-    shadow("uk.co.caprica:vlcj:${vlcj_version}") {
-        exclude group: 'net.java.dev.jna', module: 'jna'
-        exclude group: 'net.java.dev.jna', module: 'jna-platform'
-    } // vlcJ
 }
 
+//######################################################################################################################
+//                                                 Run Configurations
+//######################################################################################################################
 loom {
     runs {
         client {
@@ -56,37 +61,69 @@ tasks.withType(JavaCompile) {
     source(project(":Common").sourceSets.main.allSource)
 }
 
-jar {
-    from("LICENSE") {
-        rename { "${it}_${mod_name}" }
-    }
-    archiveClassifier.set('slim')
-}
-
+//######################################################################################################################
+//                                                    Build Tasks
+//######################################################################################################################
 shadowJar {
-    archiveClassifier.set('fat')
-    configurations = [project.configurations.shadow]
+    archiveClassifier.set('')
+    configurations = [project.configurations.library]
     exclude 'META-INF/maven/**'
     finalizedBy 'remapJar'
 }
 
 remapJar {
-    input.set shadowJar.archiveFile
+    shadowJar {}
+    //input.set shadowJar.archiveFile
 }
 
+//######################################################################################################################
+//                                                      Publish
+//######################################################################################################################
 publishing {
     publications {
         mavenJava(MavenPublication) {
             groupId project.group
             artifactId project.archivesBaseName
-            version project.version
-            from components.java
+            version project.version_main + project.version
+            artifact shadowJar
+            //from components.java
+
+            pom {
+                name = "${mod_name} ${project.name}"
+                description = 'This API provides easy ways for mod developers to play videos in a resource friendly way in Minecraft.'
+                url = 'https://www.curseforge.com/minecraft/mc-mods/fancyvideo-api'
+                licenses {
+                    license {
+                        name = 'GNU General Public License v3.0'
+                        url = 'https://www.gnu.org/licenses/'
+                    }
+                }
+                developers {
+                    developer {
+                        id = mod_author
+                        name = mod_author
+                        email = mod_author_email
+                    }
+                }
+                scm {
+                    url = 'https://github.com/Nick1st/FancyVideo-API-1.18'
+                }
+            }
         }
     }
-
     repositories {
         maven {
-            url "file://" + System.getenv("local_maven")
+            credentials {
+                username = project.hasProperty('mavenUsername') ? mavenUsername : ""
+                password = project.hasProperty('mavenPassword') ? mavenPassword : ""
+            }
+            authentication {
+                basic(BasicAuthentication)
+            }
+            name = "nick1st-repository-releases"
+            url = "https://maven.nick1st.dns.navy/releases"
         }
     }
 }
+
+publish.dependsOn(remapJar)

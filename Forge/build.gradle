@@ -1,27 +1,27 @@
-buildscript {
-    repositories {
-        maven { url = 'https://maven.minecraftforge.net' }
-        mavenCentral()
-    }
-    dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.+', changing: true
-    }
-}
-
+//######################################################################################################################
+//                                              Build Plugin Declaration
+//######################################################################################################################
 plugins {
     id 'com.github.johnrengelman.shadow' version '7.1.2'
+    id 'net.minecraftforge.gradle' version '5.+'
+    id 'eclipse'
 }
 
-apply plugin: 'java'
-apply plugin: 'net.minecraftforge.gradle'
-apply plugin: 'eclipse'
-apply plugin: 'maven-publish'
+//######################################################################################################################
+//                                               Artefact Specification
+//######################################################################################################################
+if (minecraft_version_min_forge != minecraft_version) {
+    archivesBaseName = "${mod_name}-forge-${minecraft_version_min_forge}-${minecraft_version}"
+} else {
+    archivesBaseName = "${mod_name}-forge-${minecraft_version}"
+}
 
-archivesBaseName = "${mod_name}-forge"
-
-configurations {
-    library
-    implementation.extendsFrom library
+//######################################################################################################################
+//                                                Project Dependencies
+//######################################################################################################################
+dependencies {
+    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+    compileOnly project(":Common")
 }
 
 minecraft.runs.all {
@@ -32,21 +32,30 @@ minecraft.runs.all {
     }
 }
 
+tasks.withType(JavaCompile) {
+    source(project(":Common").sourceSets.main.allSource)
+}
+
+processResources {
+    from project(":Common").sourceSets.main.resources
+}
+
 minecraft {
     mappings channel: 'official', version: minecraft_version
     
     if (project.hasProperty('forge_ats_enabled') && project.findProperty('forge_ats_enabled').toBoolean()) {
-        // This location is hardcoded in Forge and can not be changed.
-        // https://github.com/MinecraftForge/MinecraftForge/blob/be1698bb1554f9c8fa2f58e32b9ab70bc4385e60/fmlloader/src/main/java/net/minecraftforge/fml/loading/moddiscovery/ModFile.java#L123
         accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
         project.logger.debug('Forge Access Transformers are enabled for this project.')
     }
 
+//######################################################################################################################
+//                                                 Run Configurations
+//######################################################################################################################
     runs {
         client {
             workingDirectory project.file('run')
             ideaModule "${rootProject.name}.${project.name}.main"
-            taskName 'Client 1.19'
+            taskName 'Client-1.19'
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
             // This one's important, why is the default config so bad?
@@ -62,7 +71,7 @@ minecraft {
         server {
             workingDirectory project.file('run')
             ideaModule "${rootProject.name}.${project.name}.main"
-            taskName 'Server 1.19'
+            taskName 'Server-1.19'
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
             // This one's important, why is the default config so bad?
@@ -77,37 +86,9 @@ minecraft {
     }
 }
 
-sourceSets.main.resources.srcDir 'src/generated/resources'
-
-dependencies {
-    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
-    compileOnly project(":Common")
-    library("uk.co.caprica:vlcj:${vlcj_version}") { // Fallback: Direct download from https://oss.sonatype.org/content/repositories/snapshots/uk/co/caprica/
-        exclude group: 'net.java.dev.jna', module: 'jna'
-        exclude group: 'net.java.dev.jna', module: 'jna-platform'
-    }// vlcJ
-}
-
-tasks.withType(JavaCompile) {
-    source(project(":Common").sourceSets.main.allSource)
-}
-
-processResources {
-    from project(":Common").sourceSets.main.resources
-}
-
-
-jar {
-    archiveClassifier.set('slim')
-    archiveVersion.set(project.version_main + project.version)
-//    manifest {
-//        attributes([
-//                // Attributes here
-//        ])
-//    }
-//    manifest.attributes.putAll("test": "test")
-}
-
+//######################################################################################################################
+//                                                    Build Tasks
+//######################################################################################################################
 shadowJar {
     archiveClassifier.set('')
     archiveVersion.set(project.version_main + project.version)
@@ -125,18 +106,53 @@ reobf {
 
 jar.finalizedBy('reobfJar')
 
+//######################################################################################################################
+//                                                      Publish
+//######################################################################################################################
 publishing {
     publications {
         mavenJava(MavenPublication) {
             groupId project.group
             artifactId project.archivesBaseName
             version project.version_main + project.version
-            artifact jar
+            artifact shadowJar
+
+            pom {
+                name = "${mod_name} ${project.name}"
+                description = 'This API provides easy ways for mod developers to play videos in a resource friendly way in Minecraft.'
+                url = 'https://www.curseforge.com/minecraft/mc-mods/fancyvideo-api'
+                licenses {
+                    license {
+                        name = 'GNU General Public License v3.0'
+                        url = 'https://www.gnu.org/licenses/'
+                    }
+                }
+                developers {
+                    developer {
+                        id = mod_author
+                        name = mod_author
+                        email = mod_author_email
+                    }
+                }
+                scm {
+                    url = 'https://github.com/Nick1st/FancyVideo-API-1.18'
+                }
+            }
         }
     }
     repositories {
         maven {
-            url "file://" + System.getenv("local_maven")
+            credentials {
+                username = project.hasProperty('mavenUsername') ? mavenUsername : ""
+                password = project.hasProperty('mavenPassword') ? mavenPassword : ""
+            }
+            authentication {
+                basic(BasicAuthentication)
+            }
+            name = "nick1st-repository-releases"
+            url = "https://maven.nick1st.dns.navy/releases"
         }
     }
 }
+
+publish.dependsOn('reobfShadowJar')

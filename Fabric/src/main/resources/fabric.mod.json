@@ -4,7 +4,7 @@
     "version": "${version}",
   
     "name": "FancyVideo API",
-    "description": "A mod for rendering videos in minecraft.",
+    "description": "This API provides easy ways for mod developers to play videos in a resource friendly way in Minecraft.",
     "authors": [
       "Nick1st"
     ],

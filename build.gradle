@@ -1,12 +1,14 @@
 subprojects {
-    
     apply plugin: 'java'
+    apply plugin: 'maven-publish'
     
     java.toolchain.languageVersion = JavaLanguageVersion.of(17)
     java.withSourcesJar()
     java.withJavadocJar()
         
     jar {
+        archiveClassifier.set('slim')
+        archiveVersion.set(project.version_main + project.version)
         manifest {
             attributes([
                 'Specification-Title'     : mod_name,
@@ -16,7 +18,7 @@ subprojects {
                 'Implementation-Version'  : project.jar.archiveVersion,
                 'Implementation-Vendor'   : mod_author,
                 'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
-                'Timestampe'              : System.currentTimeMillis(),
+                'Timestamp'              : System.currentTimeMillis(),
                 'Built-On-Java'           : "${System.getProperty('java.vm.version')} (${System.getProperty('java.vm.vendor')})",
                 'Build-On-Minecraft'      : minecraft_version
             ])
@@ -24,23 +26,27 @@ subprojects {
     }
     
     repositories {
-
         mavenCentral()
-
         maven {
             name = 'Sponge / Mixin'
             url = 'https://repo.spongepowered.org/repository/maven-public/'
         }
+    }
 
-        maven {
-            name = 'BlameJared Maven (CrT / Bookshelf)'
-            url = 'https://maven.blamejared.com'
-        }
+    configurations {
+        library
+        implementation.extendsFrom library
+    }
+
+    dependencies {
+        library("uk.co.caprica:vlcj:${vlcj_version}") { // Fallback: Direct download from https://oss.sonatype.org/content/repositories/snapshots/uk/co/caprica/
+            exclude group: 'net.java.dev.jna', module: 'jna'
+            exclude group: 'net.java.dev.jna', module: 'jna-platform'
+        } // vlcJ
     }
     
 
     tasks.withType(JavaCompile).configureEach {
-    
         it.options.encoding = 'UTF-8'
         it.options.release = 17
     }
@@ -49,7 +55,11 @@ subprojects {
     // metadata includes mapped dependencies which are not reasonably consumable by
     // other mod developers.
     tasks.withType(GenerateModuleMetadata) {
-
         enabled = false
     }
+}
+
+if (file('credentials.gradle').exists()) {
+    apply from: 'credentials.gradle'
+    println(mod_name)
 }
