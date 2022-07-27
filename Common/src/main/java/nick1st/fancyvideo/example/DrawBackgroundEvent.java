@@ -48,11 +48,6 @@ public class DrawBackgroundEvent extends Event {
         return false;
     }
 
-    @Override
-    public void onFinished() {
-        // I don't need any cleanup
-    }
-
     public Screen getScreen() {
         return screen;
     }

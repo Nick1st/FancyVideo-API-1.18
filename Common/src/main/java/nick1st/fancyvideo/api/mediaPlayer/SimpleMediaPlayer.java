@@ -30,10 +30,21 @@ import nick1st.fancyvideo.Constants;
 import nick1st.fancyvideo.api.DefaultBufferFormatCallback;
 import nick1st.fancyvideo.api.DynamicResourceLocation;
 import nick1st.fancyvideo.api.MediaPlayerHandler;
+import nick1st.fancyvideo.api.eventbus.FancyVideoEventBus;
+import nick1st.fancyvideo.api.eventbus.event.PlayerEvents;
 import nick1st.fancyvideo.api.internal.utils.IntegerBuffer2D;
+import uk.co.caprica.vlcj.media.Media;
+import uk.co.caprica.vlcj.media.MediaEventAdapter;
+import uk.co.caprica.vlcj.media.MediaRef;
+import uk.co.caprica.vlcj.medialist.MediaList;
+import uk.co.caprica.vlcj.player.base.MediaPlayer;
+import uk.co.caprica.vlcj.player.base.MediaPlayerEventAdapter;
+import uk.co.caprica.vlcj.player.base.TitleDescription;
 import uk.co.caprica.vlcj.player.component.CallbackMediaListPlayerComponent;
 import uk.co.caprica.vlcj.player.component.CallbackMediaPlayerComponent;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
+import uk.co.caprica.vlcj.player.list.MediaListPlayer;
+import uk.co.caprica.vlcj.player.list.MediaListPlayerEventAdapter;
 
 import java.util.concurrent.Semaphore;
 
@@ -57,6 +68,16 @@ public class SimpleMediaPlayer extends MediaPlayerBase {
             mediaPlayerComponent = null;
         } else {
             mediaPlayerComponent = new CallbackMediaListPlayerComponent(MediaPlayerHandler.getInstance().getFactory(), null, null, true, null, callback, new DefaultBufferFormatCallback(this), null);
+
+            mediaPlayerComponent.mediaPlayer().subitems().events().addMediaListPlayerEventListener(new MediaListPlayerEventAdapter() {
+                @Override
+                public void mediaListPlayerFinished(MediaListPlayer mediaList) {
+                    Constants.LOG.debug("Called MLPF-Event.");
+                    mediaList.submit(
+                            () -> FancyVideoEventBus.getInstance().runEvent(new PlayerEvents.PlayerFinishedEvent(resourceLocation))
+                    );
+                }
+            });
         }
     }
 

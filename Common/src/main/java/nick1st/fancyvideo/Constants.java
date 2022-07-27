@@ -25,6 +25,7 @@
 
 package nick1st.fancyvideo; //NOSONAR
 
+import nick1st.fancyvideo.api.DynamicResourceLocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,4 +54,7 @@ public record Constants() {
     // No_Library_Mode
     public static boolean NO_LIBRARY_MODE;
     public static final boolean DEBUG_NO_LIBRARY_MODE = false;
+
+    // Empty DynamicResourceLocation;
+    public static final DynamicResourceLocation EMPTY_RES_LOC = new DynamicResourceLocation("", "");
 }

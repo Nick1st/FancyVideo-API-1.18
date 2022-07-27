@@ -86,5 +86,7 @@ public abstract class Event {
      * Template Methode. <br>
      * Override this if you need to do something after your event has run.
      */
-    public abstract void onFinished();
+    public void onFinished() {
+        // Template Methode
+    }
 }

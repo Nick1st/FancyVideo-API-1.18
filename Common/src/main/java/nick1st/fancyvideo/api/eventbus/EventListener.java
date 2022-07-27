@@ -25,6 +25,9 @@
 
 package nick1st.fancyvideo.api.eventbus; //NOSONAR
 
+import nick1st.fancyvideo.Constants;
+import nick1st.fancyvideo.api.DynamicResourceLocation;
+
 import java.lang.reflect.Method;
 
 /**
@@ -32,9 +35,25 @@ import java.lang.reflect.Method;
  * @param instance The object or class to send to.
  * @param priority The priority of this event.
  * @param phase    The phase we should send to the methode.
+ * @param player   The player the event should fire for.
  * @see EventPriority
  * @see nick1st.fancyvideo.api.eventbus.event.Event
- * @since 0.2.0.0
+ * @since 2.2.0.4
  */
-public record EventListener(Method event, Object instance, EventPriority priority, EventPhase phase) {
+public record EventListener(Method event, Object instance, EventPriority priority, EventPhase phase, DynamicResourceLocation player) {
+
+    /**
+     * @param event    The methode to send to.
+     * @param instance The object or class to send to.
+     * @param priority The priority of this event.
+     * @param phase    The phase we should send to the methode.
+     * @see EventPriority
+     * @see nick1st.fancyvideo.api.eventbus.event.Event
+     * @since 0.2.0.0
+     * @deprecated Use the main constructor instead
+     */
+    @Deprecated(since = "2.2.0.4")
+    public EventListener(Method event, Object instance, EventPriority priority, EventPhase phase) {
+        this(event, instance, priority, phase, Constants.EMPTY_RES_LOC);
+    }
 }

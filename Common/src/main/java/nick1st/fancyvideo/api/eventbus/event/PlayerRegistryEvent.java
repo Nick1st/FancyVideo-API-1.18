@@ -57,11 +57,6 @@ public class PlayerRegistryEvent {
             return false;
         }
 
-        @Override
-        public void onFinished() {
-            // We don't need any cleanup, so this is empty.
-        }
-
         /**
          * Convenience methode to get the {@link MediaPlayerHandler}.
          *
@@ -85,7 +80,7 @@ public class PlayerRegistryEvent {
      * @since 0.2.0.0
      */
     @SuppressWarnings("unused")
-    public static class RemovePlayerEvent extends PhasedEvent {
+    public static class RemovePlayerEvent extends PhasedEvent implements PlayerEvent {
 
         public final DynamicResourceLocation resourceLocation;
 
@@ -109,6 +104,15 @@ public class PlayerRegistryEvent {
             if (phase == EventPhase.EVENT) {
                 MediaPlayerHandler.getInstance().getMediaPlayer(resourceLocation).cleanup();
             }
+        }
+
+        /**
+         *
+         * @since 2.2.0.4
+         */
+        @Override
+        public DynamicResourceLocation getPlayer() {
+            return resourceLocation;
         }
     }
 }

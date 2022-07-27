@@ -41,4 +41,12 @@ public @interface FancyVideoEvent {
     EventPriority priority() default EventPriority.NORMAL;
 
     EventPhase phase() default EventPhase.EVENT;
+
+    /**
+     * This specifies the player an event should run for.
+     * Note that this does <b>NOT</b> stop others from catching the event.
+     *
+     * @since 2.2.0.4
+     */
+    String player() default "";
 }

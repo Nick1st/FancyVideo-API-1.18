@@ -26,7 +26,9 @@
 package nick1st.fancyvideo.api.eventbus; //NOSONAR
 
 import nick1st.fancyvideo.Constants;
+import nick1st.fancyvideo.api.DynamicResourceLocation;
 import nick1st.fancyvideo.api.eventbus.event.Event;
+import nick1st.fancyvideo.api.eventbus.event.PlayerEvent;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -87,7 +89,10 @@ public class FancyVideoEventBus {
                                 events.put(identifier.getName(), new ArrayList<>());
                             }
                             EventPhase phase = method.getAnnotation(FancyVideoEvent.class).phase();
-                            events.get(identifier.getName()).add(new EventListener(method, o, priority, phase));
+                            DynamicResourceLocation player = method.getAnnotation(FancyVideoEvent.class).player().isBlank() ?
+                                    Constants.EMPTY_RES_LOC :
+                                    new DynamicResourceLocation(method.getAnnotation(FancyVideoEvent.class).player().split(":")[0], method.getAnnotation(FancyVideoEvent.class).player().split(":")[1]);
+                            events.get(identifier.getName()).add(new EventListener(method, o, priority, phase, player));
                             Constants.LOG.debug("Registered event '{}' ({}) from '{}'!", method.getName(), identifier.getTypeName(), callingClass.getName());
                         } else {
                             throw new EventException.EventRegistryException("Methode '" + method.toGenericString() +
@@ -142,14 +147,20 @@ public class FancyVideoEventBus {
             List<EventListener> low = new ArrayList<>();
             List<EventListener> lowest = new ArrayList<>();
             for (EventListener c : events.get(event.getClass().getName())) {
-                if (c.phase() == phase) {
-                    switch (c.priority()) {
-                        case SURPREME -> supreme.add(c);
-                        case HIGHEST -> highest.add(c);
-                        case HIGH -> high.add(c);
-                        case NORMAL -> normal.add(c);
-                        case LOW -> low.add(c);
-                        case LOWEST -> lowest.add(c);
+                DynamicResourceLocation playerInQuestion = Constants.EMPTY_RES_LOC;
+                if (event instanceof PlayerEvent) {
+                    playerInQuestion = ((PlayerEvent) event).getPlayer();
+                }
+                if (playerInQuestion.equals(Constants.EMPTY_RES_LOC) || c.player().equals(Constants.EMPTY_RES_LOC) || playerInQuestion.equals(c.player())) {
+                    if (c.phase() == phase) {
+                        switch (c.priority()) {
+                            case SURPREME -> supreme.add(c);
+                            case HIGHEST -> highest.add(c);
+                            case HIGH -> high.add(c);
+                            case NORMAL -> normal.add(c);
+                            case LOW -> low.add(c);
+                            case LOWEST -> lowest.add(c);
+                        }
                     }
                 }
             }

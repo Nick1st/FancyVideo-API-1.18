@@ -35,6 +35,7 @@ import nick1st.fancyvideo.api.DynamicResourceLocation;
 import nick1st.fancyvideo.api.MediaPlayerHandler;
 import nick1st.fancyvideo.api.eventbus.EventPhase;
 import nick1st.fancyvideo.api.eventbus.FancyVideoEvent;
+import nick1st.fancyvideo.api.eventbus.event.PlayerEvents;
 import nick1st.fancyvideo.api.eventbus.event.PlayerRegistryEvent;
 import nick1st.fancyvideo.api.mediaPlayer.MediaPlayerBase;
 import nick1st.fancyvideo.api.mediaPlayer.SimpleMediaPlayer;
@@ -54,6 +55,15 @@ public class APIExample {
             event.handler().getMediaPlayer(resourceLocation).api().audio().setVolume(200);
         } else {
             Constants.LOG.warn("Example running in NO_LIBRARY_MODE");
+        }
+    }
+
+    @FancyVideoEvent(player = Constants.MOD_ID + ":" + "example")
+    @SuppressWarnings("unused")
+    public void onFinished(PlayerEvents.PlayerFinishedEvent event) {
+        Constants.LOG.info("Finished Event Fired");
+        if (event.getMediaPlayer().providesAPI()) {
+            event.getMediaPlayer().api().media().play("https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4");
         }
     }
 
@@ -102,11 +112,9 @@ public class APIExample {
         }
     }
 
-    @FancyVideoEvent(phase = EventPhase.PRE)
+    @FancyVideoEvent(phase = EventPhase.PRE, player = Constants.MOD_ID + ":" + "example")
     @SuppressWarnings("unused")
     public void removePlayer(PlayerRegistryEvent.RemovePlayerEvent event) {
-        if (event.resourceLocation == resourceLocation) {
-            resourceLocation = null;
-        }
+        resourceLocation = null;
     }
 }
