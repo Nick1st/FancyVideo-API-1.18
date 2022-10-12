@@ -1,29 +1,29 @@
 modLoader="javafml" #mandatory
 loaderVersion="[41,)" #mandatory
-license="GNU GPL 3.0"
+license="${license}"
 
-issueTrackerURL="https://github.com/Nick1st/FancyVideo-API/issues"
+issueTrackerURL="https://github.com/Nick1st/${sources}"
 
 [[mods]]
-    modId="fancyvideo_api" #mandatory
-    version="${file.jarVersion}" #mandatory
-    displayName="FancyVideo API" #mandatory
+    modId="${modid}" #mandatory
+    version="${version}" #mandatory
+    displayName="${name}" #mandatory
     # A URL to query for updates for this mod. See the JSON update specification https://mcforge.readthedocs.io/en/latest/gettingstarted/autoupdate/
     #updateJSONURL="https://change.me.example.invalid/updates.json" #optional
-    displayURL="https://www.curseforge.com/minecraft/mc-mods/fancyvideo-api"
+    displayURL="https://www.curseforge.com/minecraft/mc-mods/${slug}"
     logoFile="fancyvideo-api.png"
     credits="Thanks to the team behind VLC and Caprica for VLCJ, without them this mod wouldn't be possible. Also huge THANKS to Silk for helping me out with a few ideas, that made this finally possible."
-    authors="Nick1st"
-    description='''This API provides easy ways for mod developers to play videos in a resource friendly way in Minecraft.'''
+    authors="${author}"
+    description='''${description}'''
 
-    [[dependencies.fancyvideo-api]] #optional
+    [[dependencies.${modid}]] #optional
         modId="forge" #mandatory
         mandatory=true #mandatory
         versionRange="[41,)" #mandatory
         ordering="NONE"
         side="BOTH"
 
-    [[dependencies.fancyvideo-api]]
+    [[dependencies.${modid}]]
         modId="minecraft"
         mandatory=true
         versionRange="[1.19,1.20)"

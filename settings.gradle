@@ -16,5 +16,5 @@ pluginManagement {
     }
 }
 
-rootProject.name = 'FancyVideo-API'
+rootProject.name = mod_name
 include("Common", "Fabric", "Forge")

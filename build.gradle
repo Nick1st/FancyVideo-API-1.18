@@ -8,19 +8,19 @@ subprojects {
         
     jar {
         archiveClassifier.set('slim')
-        archiveVersion.set(project.version_main + project.version)
+        archiveVersion.set(project.version)
         manifest {
             attributes([
                 'Specification-Title'     : mod_name,
-                'Specification-Vendor'    : mod_author,
+                'Specification-Vendor'    : author,
                 'Specification-Version'   : project.jar.archiveVersion,
                 'Implementation-Title'    : project.name,
                 'Implementation-Version'  : project.jar.archiveVersion,
-                'Implementation-Vendor'   : mod_author,
+                'Implementation-Vendor'   : author,
                 'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
-                'Timestamp'              : System.currentTimeMillis(),
+                'Timestamp'               : System.currentTimeMillis(),
                 'Built-On-Java'           : "${System.getProperty('java.vm.version')} (${System.getProperty('java.vm.vendor')})",
-                'Build-On-Minecraft'      : minecraft_version
+                'Build-On-Minecraft'      : minecraft_version_min
             ])
         }
     }

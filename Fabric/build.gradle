@@ -84,7 +84,7 @@ publishing {
         mavenJava(MavenPublication) {
             groupId project.group
             artifactId project.archivesBaseName
-            version project.version_main + project.version
+            version project.version
             artifact shadowJar
             //from components.java
 
@@ -100,9 +100,9 @@ publishing {
                 }
                 developers {
                     developer {
-                        id = mod_author
-                        name = mod_author
-                        email = mod_author_email
+                        id = author
+                        name = author
+                        email = author_email
                     }
                 }
                 scm {

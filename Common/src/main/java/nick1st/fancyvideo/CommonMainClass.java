@@ -25,14 +25,13 @@
 
 package nick1st.fancyvideo; //NOSONAR
 
-import com.sun.jna.NativeLibrary; //NOSONAR
+import com.sun.jna.NativeLibrary;
 import nick1st.fancyvideo.api.MediaPlayerHandler;
 import nick1st.fancyvideo.api.eventbus.EventException;
 import nick1st.fancyvideo.api.eventbus.FancyVideoEventBus;
 import nick1st.fancyvideo.api.eventbus.event.EnvironmentSetupedEvent;
 import nick1st.fancyvideo.api.eventbus.event.PlayerRegistryEvent;
 import nick1st.fancyvideo.config.SimpleConfig;
-import nick1st.fancyvideo.environment.EnvironmentServices;
 import nick1st.fancyvideo.example.APIExample;
 import nick1st.fancyvideo.internal.Arch;
 import nick1st.fancyvideo.internal.DLLHandler;

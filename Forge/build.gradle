@@ -20,7 +20,7 @@ if (minecraft_version_min_forge != minecraft_version) {
 //                                                Project Dependencies
 //######################################################################################################################
 dependencies {
-    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+    minecraft "net.minecraftforge:forge:${minecraft_version_min_forge}-${forge_version}"
     compileOnly project(":Common")
 }
 
@@ -41,7 +41,7 @@ processResources {
 }
 
 minecraft {
-    mappings channel: 'official', version: minecraft_version
+    mappings channel: 'official', version: minecraft_version_min_forge
     
     if (project.hasProperty('forge_ats_enabled') && project.findProperty('forge_ats_enabled').toBoolean()) {
         accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
@@ -89,9 +89,26 @@ minecraft {
 //######################################################################################################################
 //                                                    Build Tasks
 //######################################################################################################################
+processResources {
+    outputs.upToDateWhen { false }
+
+    filesMatching("META-INF/mods.toml") {
+        expand([
+                "modid": (project.mod_name as String).replaceAll("-", "_").toLowerCase(),
+                "version": project.version,
+                "name": (project.mod_name as String).replaceAll("-", " "),
+                "description": project.mod_description,
+                "author": project.author,
+                "slug": (project.mod_name as String).toLowerCase(),
+                "sources": project.mod_name + "-1.18", //TODO Change the source repo one day
+                "license": project.license
+        ])
+    }
+}
+
 shadowJar {
     archiveClassifier.set('')
-    archiveVersion.set(project.version_main + project.version)
+    archiveVersion.set(project.version)
     configurations = [project.configurations.library]
     finalizedBy 'reobfShadowJar'
     exclude 'META-INF/maven/**'
@@ -114,28 +131,28 @@ publishing {
         mavenJava(MavenPublication) {
             groupId project.group
             artifactId project.archivesBaseName
-            version project.version_main + project.version
+            version project.version
             artifact shadowJar
 
             pom {
-                name = "${mod_name} ${project.name}"
-                description = 'This API provides easy ways for mod developers to play videos in a resource friendly way in Minecraft.'
-                url = 'https://www.curseforge.com/minecraft/mc-mods/fancyvideo-api'
+                name = "${(mod_name as String).replaceAll('-', ' ')}"
+                description = "${mod_description}"
+                url = "https://www.curseforge.com/minecraft/mc-mods/${(project.mod_name as String).toLowerCase()}"
                 licenses {
                     license {
-                        name = 'GNU General Public License v3.0'
-                        url = 'https://www.gnu.org/licenses/'
+                        name = "${license}"
+                        url = "${license_url}"
                     }
                 }
                 developers {
                     developer {
-                        id = mod_author
-                        name = mod_author
-                        email = mod_author_email
+                        id = author
+                        name = author
+                        email = author_email
                     }
                 }
                 scm {
-                    url = 'https://github.com/Nick1st/FancyVideo-API-1.18'
+                    url = "https://github.com/Nick1st/${mod_name + "-1.18"}"
                 }
             }
         }

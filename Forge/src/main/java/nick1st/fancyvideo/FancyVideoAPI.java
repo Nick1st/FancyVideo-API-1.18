@@ -44,7 +44,6 @@ import org.apache.logging.log4j.core.filter.AbstractFilter;
 import java.util.Arrays;
 
 @Mod(Constants.MOD_ID)
-@SuppressWarnings("unused")
 public class FancyVideoAPI {
 
     // Config Holder
