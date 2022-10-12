@@ -48,6 +48,9 @@ public class DLLHandler {
     }
 
     public static boolean unpack(ClassLoader loader) {
+        if (true) { //TODO Remove this
+            return false;
+        }
         if (Constants.DEBUG_NO_LIBRARY_MODE) {
             Constants.LOG.warn("Debugging NO_LIBRARY_MODE; VLC will be unavailable.");
             return false;

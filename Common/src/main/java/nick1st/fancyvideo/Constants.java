@@ -55,6 +55,6 @@ public record Constants() {
     public static boolean NO_LIBRARY_MODE;
     public static final boolean DEBUG_NO_LIBRARY_MODE = false;
 
-    // Empty DynamicResourceLocation;
+    // Empty DynamicResourceLocation
     public static final DynamicResourceLocation EMPTY_RES_LOC = new DynamicResourceLocation("", "");
 }

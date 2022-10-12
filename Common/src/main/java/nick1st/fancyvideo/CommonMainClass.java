@@ -29,14 +29,18 @@ import com.sun.jna.NativeLibrary; //NOSONAR
 import nick1st.fancyvideo.api.MediaPlayerHandler;
 import nick1st.fancyvideo.api.eventbus.EventException;
 import nick1st.fancyvideo.api.eventbus.FancyVideoEventBus;
+import nick1st.fancyvideo.api.eventbus.event.EnvironmentSetupedEvent;
 import nick1st.fancyvideo.api.eventbus.event.PlayerRegistryEvent;
 import nick1st.fancyvideo.config.SimpleConfig;
+import nick1st.fancyvideo.environment.EnvironmentServices;
 import nick1st.fancyvideo.example.APIExample;
 import nick1st.fancyvideo.internal.Arch;
 import nick1st.fancyvideo.internal.DLLHandler;
 import nick1st.fancyvideo.internal.LibraryMapping;
+import nick1st.fancyvideo.natives.api.NativeHelper;
+import nick1st.fancyvideo.natives.api.NativeListEntry;
 import org.apache.commons.lang3.SystemUtils;
-import uk.co.caprica.vlcj.binding.RuntimeUtil;
+import uk.co.caprica.vlcj.binding.support.runtime.RuntimeUtil;
 import uk.co.caprica.vlcj.factory.discovery.NativeDiscovery;
 import uk.co.caprica.vlcj.factory.discovery.strategy.NativeDiscoveryStrategy;
 import uk.co.caprica.vlcj.support.version.LibVlcVersion;
@@ -46,8 +50,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
+import java.util.Set;
 
-import static uk.co.caprica.vlcj.binding.LibVlc.libvlc_get_version;
+import static uk.co.caprica.vlcj.binding.lib.LibVlc.libvlc_get_version;
 
 public class CommonMainClass {
     private final NativeDiscovery discovery = new NativeDiscovery();
@@ -75,6 +80,11 @@ public class CommonMainClass {
             config.properties.setProperty("dllVersion", String.valueOf(Constants.DLL_VERSION));
             config.write();
         }
+
+        // Init natives the new way TODO Change comment
+        Set<NativeListEntry> unavailable = Set.copyOf(NativeHelper.load());
+        FancyVideoEventBus.getInstance().runEvent(new EnvironmentSetupedEvent(unavailable));
+
 
         // Init natives
         if (!onInit()) {
