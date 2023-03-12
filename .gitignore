@@ -13,3 +13,4 @@ build
 # other
 run
 credentials.gradle
+logs
