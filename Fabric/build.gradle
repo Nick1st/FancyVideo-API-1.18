@@ -121,7 +121,7 @@ publishing {
                 basic(BasicAuthentication)
             }
             name = "nick1st-repository-releases"
-            url = "https://maven.nick1st.dns.navy/releases"
+            url = "https://maven.nick1st.de/releases"
         }
     }
 }
