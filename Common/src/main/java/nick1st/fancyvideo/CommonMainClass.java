@@ -36,7 +36,7 @@ import nick1st.fancyvideo.internal.Arch;
 import nick1st.fancyvideo.internal.DLLHandler;
 import nick1st.fancyvideo.internal.LibraryMapping;
 import org.apache.commons.lang3.SystemUtils;
-import uk.co.caprica.vlcj.binding.RuntimeUtil;
+import uk.co.caprica.vlcj.binding.support.runtime.RuntimeUtil;
 import uk.co.caprica.vlcj.factory.discovery.NativeDiscovery;
 import uk.co.caprica.vlcj.factory.discovery.strategy.NativeDiscoveryStrategy;
 import uk.co.caprica.vlcj.support.version.LibVlcVersion;
@@ -47,7 +47,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 
-import static uk.co.caprica.vlcj.binding.LibVlc.libvlc_get_version;
+import static uk.co.caprica.vlcj.binding.lib.LibVlc.libvlc_get_version;
 
 public class CommonMainClass {
     private final NativeDiscovery discovery = new NativeDiscovery();

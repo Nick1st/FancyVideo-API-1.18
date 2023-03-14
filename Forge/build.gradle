@@ -50,7 +50,7 @@ minecraft {
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
             // This one's important, why is the default config so bad?
-            property 'log4j.configurationFile', 'config\\log4j2.xml'
+            property 'log4j.configurationFile', 'config/log4j2.xml'
             mods {
                 modClientRun {
                     source sourceSets.main
@@ -84,6 +84,7 @@ dependencies {
     compileOnly project(":Common")
     library("uk.co.caprica:vlcj:${vlcj_version}") { // Fallback: Direct download from https://oss.sonatype.org/content/repositories/snapshots/uk/co/caprica/
         exclude group: 'net.java.dev.jna', module: 'jna'
+        exclude group: 'com.sun.jna', module: 'jna'
         exclude group: 'net.java.dev.jna', module: 'jna-platform'
     }// vlcJ
 }
@@ -114,6 +115,7 @@ shadowJar {
     configurations = [project.configurations.library]
     finalizedBy 'reobfShadowJar'
     exclude 'META-INF/maven/**'
+    relocate 'uk.co.caprica', 'nick1st.uk.co.caprica' // <- this realocates the package
 }
 
 assemble.dependsOn shadowJar
