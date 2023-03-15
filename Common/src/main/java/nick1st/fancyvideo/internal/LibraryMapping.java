@@ -38,7 +38,7 @@ public enum LibraryMapping {
     // audio_output
     libADummy(Constants.AUDIO_OUTPUT, "libadummy_plugin"),
     libAMem(Constants.AUDIO_OUTPUT, "libamem_plugin"),
-    libaWaveout(Constants.AUDIO_OUTPUT, "libawaveout_plugin"),
+    libWaveout(Constants.AUDIO_OUTPUT, "libwaveout_plugin"),
 
     // logger
     libConsoleLogger("logger", "libconsole_logger_plugin"),
