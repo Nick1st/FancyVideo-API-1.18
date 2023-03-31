@@ -138,6 +138,7 @@ public class Request {
             }
 
             remap.forEach((duplicate, mapToThis) -> {
+                Set<Integer> containedInRemapThing = ModuleLike.Registry.contains.get(duplicate);
                 ModuleLike.Registry.contains.remove(duplicate);
                 ModuleLike.Registry.holderMapping.replaceAll((key, value) -> Objects.equals(value, duplicate) ? mapToThis : value);
                 ModuleLike.Registry.identifiersToId.replaceAll((key, value) -> Objects.equals(value, duplicate) ? mapToThis : value);
@@ -152,6 +153,10 @@ public class Request {
                     ModuleLike.Registry.contains.get(duplicateContainedInGroup).add(mapToThis);
                 });
                 ModuleLike.Registry.containedIn.remove(duplicate);
+                if (!containedInRemapThing.isEmpty()) {
+                    // We need to remove this id from the values from contained in
+                    containedInRemapThing.forEach(containedDuplicate -> ModuleLike.Registry.containedIn.get(containedDuplicate).remove(duplicate));
+                }
 
                 Set<ResourceLocation> duplicateKnowIdentifiers = ModuleLike.Registry.knownModuleLikeIdentifiers.get(duplicate);
                 ModuleLike.Registry.knownModuleLikeIdentifiers.remove(duplicate);

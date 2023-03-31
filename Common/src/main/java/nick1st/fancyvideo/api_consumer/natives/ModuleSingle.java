@@ -13,7 +13,7 @@ import java.util.Objects;
 public class ModuleSingle implements ModuleLike {
     private final ModulePOJO modulePOJO;
     private final int requestCount;
-    private final ResourceLocation identifier;
+    final ResourceLocation identifier;
 
     /**
      * Internal constructor to create non-mutable ModuleSingle instances.
@@ -47,8 +47,10 @@ public class ModuleSingle implements ModuleLike {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ModuleSingle that = (ModuleSingle) o;
+        if (o instanceof ModuleHolder holder) { // This allows matching a holder
+            return getIdentifier().equals(holder.placeholderFor);
+        }
+        if (!(o instanceof ModuleSingle that)) return false; // Note that this does allow subclasses
         return getIdentifier().equals(that.getIdentifier());
     }
 

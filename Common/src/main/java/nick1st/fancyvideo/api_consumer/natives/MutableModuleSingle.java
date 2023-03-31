@@ -2,30 +2,23 @@ package nick1st.fancyvideo.api_consumer.natives;
 
 import net.minecraft.resources.ResourceLocation;
 
-import java.util.Objects;
-
 /**
  * A mutable {@link ModuleSingle}.
  * @since 3.0.0
  * @author Nick1st - <a href="mailto:nick1st.dev@gmail.com">{@literal <nick1st.dev@gmail.com>}</a>
  */
-public class MutableModuleSingle implements ModuleLike{
+public class MutableModuleSingle extends ModuleSingle implements ModuleLike{
     boolean isFeature;
-    final ResourceLocation identifier;
-    final ModulePOJO modulePOJO;
+    private boolean isAlreadyBuild;
 
     /**
-     * Creates a ModularModuleSingle.
+     * Creates a MutableModuleSingle.
      * @param identifier The {@link ResourceLocation} used as a unique identifier. The namespace needs to be
      *                   'vlc_modules'.
      * @since 3.0.0
      */
     public MutableModuleSingle(ResourceLocation identifier) {
-        if (!identifier.getNamespace().equals("vlc_modules")) {
-            throw new IllegalArgumentException("Illegal ModuleSingle identifier. ModuleSingle identifier namespace must be 'vlc_modules'.");
-        }
-        this.modulePOJO = new ModulePOJO(identifier.getPath());
-        this.identifier = identifier;
+        super(identifier, 0);
     }
 
     /**
@@ -40,23 +33,18 @@ public class MutableModuleSingle implements ModuleLike{
     }
 
     /**
-     * Builds the MutableModuleSingle and registers it to the registry. After that you should drop the reference to the
+     * Builds the MutableModuleSingle and registers it to the registry. After that you should drop all references to the
      * MutableModuleSingle and never modify it again.
      * @return The identifier of this ModuleSingle. Use {@link ModuleLike.Registry#getModuleSingle(ResourceLocation)} to
      *         get a reference to the unmodifiable ModuleSingle.
      * @since 3.0.0
      */
     public ResourceLocation build() {
+        if (isAlreadyBuild) {
+            throw new UnsupportedOperationException("MutableModuleSingle already build.");
+        }
         ModuleLike.Registry.tryAddingModule(this);
-        return identifier;
-    }
-
-    /**
-     * @return The identifier of this ModuleSingle.
-     * @since 3.0.0
-     */
-    @Override
-    public ResourceLocation getIdentifier() {
+        isAlreadyBuild = true;
         return identifier;
     }
 
@@ -65,18 +53,5 @@ public class MutableModuleSingle implements ModuleLike{
         return "MutableModuleSingle{" +
                 "identifier=" + identifier +
                 '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        MutableModuleSingle that = (MutableModuleSingle) o;
-        return getIdentifier().equals(that.getIdentifier());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getIdentifier());
     }
 }

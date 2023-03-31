@@ -11,7 +11,7 @@ import java.util.Objects;
  */
 public class ModuleHolder implements ModuleLike{
 
-    private final ResourceLocation identifier;
+    private final ResourceLocation internalIdentifier;
     final ResourceLocation placeholderFor;
     boolean isFeature;
 
@@ -19,13 +19,13 @@ public class ModuleHolder implements ModuleLike{
 
     /**
      * Public constructor to initialise the holder.
-     * @param identifier The identifier this is a placeholder for.
+     * @param internalIdentifier The identifier this is a placeholder for.
      * @param isFeature If this ModuleHolder should add a feature mark to the resolved {@link ModuleLike}.
      * @since 3.0.0
      */
-    public ModuleHolder(ResourceLocation identifier, boolean isFeature) { // TODO
-        this.identifier = new ResourceLocation("placeholder_" + identifier.getNamespace(), identifier.getPath());
-        this.placeholderFor = identifier;
+    public ModuleHolder(ResourceLocation internalIdentifier, boolean isFeature) { // TODO
+        this.internalIdentifier = new ResourceLocation("placeholder_" + internalIdentifier.getNamespace(), internalIdentifier.getPath());
+        this.placeholderFor = internalIdentifier;
         this.isFeature = isFeature;
     }
 
@@ -36,8 +36,8 @@ public class ModuleHolder implements ModuleLike{
      * @since 3.0.0
      */
     ModuleHolder(ResourceLocation internalIdentifier, int requestCount) {
-        this.identifier = internalIdentifier;
-        this.placeholderFor = new ResourceLocation(identifier.toString().substring(12));
+        this.internalIdentifier = internalIdentifier;
+        this.placeholderFor = new ResourceLocation(this.internalIdentifier.toString().substring(12));
         this.featureCount = requestCount;
     }
 
@@ -49,16 +49,15 @@ public class ModuleHolder implements ModuleLike{
      */
     public ResourceLocation build() {
         ModuleLike.Registry.tryAddingHolder(this);
-        return identifier;
+        return internalIdentifier;
     }
 
     /**
      * @return The identifier of the ModuleLike this is a placeholder for.
      * @since 3.0.0
      */
-    @Override
-    public ResourceLocation getIdentifier() {
-        return identifier;
+    public ResourceLocation getInternalIdentifier() {
+        return internalIdentifier;
     }
 
     @Override
@@ -73,11 +72,16 @@ public class ModuleHolder implements ModuleLike{
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ModuleHolder that = (ModuleHolder) o;
-        return getIdentifier().equals(that.getIdentifier());
+        return getInternalIdentifier().equals(that.getInternalIdentifier());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getIdentifier());
+        return Objects.hash(getInternalIdentifier());
+    }
+
+    @Override
+    public ResourceLocation getIdentifier() {
+        return placeholderFor;
     }
 }

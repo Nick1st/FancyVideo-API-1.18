@@ -65,7 +65,12 @@ public interface ModuleLike {
             Integer nameExistingId = identifiersToId.get(moduleGroup.identifier);
 
             Integer alreadyExistingId = contains.inverse().get(moduleGroup.containedModules.stream()
-                    .map(moduleLike -> Registry.identifiersToId.get(moduleLike.getIdentifier()))
+                    .map(moduleLike -> {
+                        if (moduleLike instanceof ModuleHolder moduleHolder) {
+                            return mappedOrHolderId(moduleHolder);
+                        }
+                        return Registry.identifiersToId.get(moduleLike.getIdentifier());
+                    })
                     .collect(Collectors.toSet()));
 
             // Start by checking if this moduleGroup is already specified under a different name.
@@ -110,15 +115,25 @@ public interface ModuleLike {
                     Integer newId = moduleGroupId++;
                     //groupDefinitions.put(newId, moduleGroup.containedModules); // FIXME Unused
                     contains.put(newId, moduleGroup.containedModules.stream()
-                            .map(moduleLike -> Registry.identifiersToId.get(moduleLike.getIdentifier()))
+                            .map(moduleLike -> {
+                                if (moduleLike instanceof  ModuleHolder containsModuleHolder) {
+                                    return mappedOrHolderId(containsModuleHolder);
+                                }
+                                return Registry.identifiersToId.get(moduleLike.getIdentifier());
+                            })
                             .collect(Collectors.toSet()));
                     identifiersToId.put(moduleGroup.identifier, newId);
                     knownModuleLikeIdentifiers.put(newId, new HashSet<>());
                     knownModuleLikeIdentifiers.get(newId).add(moduleGroup.identifier);
                     featureCount.put(newId, moduleGroup.isFeature ? 1 : 0);
                     containedIn.put(newId, new HashSet<>());
-                    moduleGroup.containedModules.forEach(containedModule ->
-                            containedIn.get(identifiersToId.get(containedModule.getIdentifier())).add(newId)
+                    moduleGroup.containedModules.forEach(containedModule -> {
+                            if (containedModule instanceof ModuleHolder containedModuleHolder) {
+                                containedIn.get(mappedOrHolderId(containedModuleHolder)).add(newId);
+                            } else {
+                                containedIn.get(identifiersToId.get(containedModule.getIdentifier())).add(newId);
+                            }
+                        }
                     );
                 }
             }
@@ -130,6 +145,12 @@ public interface ModuleLike {
                         identifiersToId.get(moduleGroup.identifier));
                 holderNotMapped.remove(moduleGroup.identifier);
             }
+        }
+
+        public static Integer mappedOrHolderId(ModuleHolder moduleHolder) {
+            Integer holderId = identifiersToId.get(moduleHolder.getInternalIdentifier());
+            Integer mappedToId = holderMapping.get(holderId);
+            return (mappedToId == null) ? holderId : mappedToId;
         }
 
         public static @Nullable ModuleGroup getModuleGroup(@Nonnull ResourceLocation groupIdentifier) {
@@ -148,24 +169,22 @@ public interface ModuleLike {
          * @since 3.0.0
          */
         protected static void tryAddingModule(MutableModuleSingle moduleSingle) {
-            Integer nameExistingId = identifiersToId.get(moduleSingle.identifier);
+            Integer nameExistingId = identifiersToId.get(moduleSingle.getIdentifier());
 
-            // Check if the identifier we're trying to add already exists.
-            if (nameExistingId != null) {
-                // The name we're trying to add already exists. This is strange and normally shouldn't be the case
-                // Warn about double registration.
-                Constants.LOG.warn("Trying to register already registered ModuleSingle [id = {}], aka {}",
-                        nameExistingId, moduleSingle.identifier);
-                featureCount.put(nameExistingId, featureCount.get(nameExistingId) + (moduleSingle.isFeature ? 1 : 0));
-            } else {
-                // The ModuleSingle is not yet specified. We can safely add it as a new ModuleSingle.
+            // Check that the identifier we're trying to add does not already exist.
+            if (nameExistingId == null) {
+                // The ModuleSingle is not yet specified. So we create a new ModuleSingle.
                 Integer newId = moduleSingleId--;
-                identifiersToId.put(moduleSingle.identifier, newId);
+                identifiersToId.put(moduleSingle.getIdentifier(), newId);
                 knownModuleLikeIdentifiers.put(newId, new HashSet<>());
                 knownModuleLikeIdentifiers.get(newId).add(moduleSingle.identifier);
-                featureCount.put(newId, moduleSingle.isFeature ? 1 : 0);
+                featureCount.put(newId, 0); // Initialise with a feature count of zero.
                 containedIn.put(newId, new HashSet<>());
+                nameExistingId = newId;
             }
+
+            // Increase the featureCount if this ModuleSingle provides a feature.
+            featureCount.put(nameExistingId, featureCount.get(nameExistingId) + (moduleSingle.isFeature ? 1 : 0));
 
             // Check if there are holder mappings to fill and do so if appropriate
             if (holderNotMapped.contains(moduleSingle.identifier)) {
@@ -191,14 +210,8 @@ public interface ModuleLike {
          * @since 3.0.0
          */
         protected static void tryAddingHolder(ModuleHolder moduleHolder) {
-            Integer nameExistingId = identifiersToId.get(moduleHolder.getIdentifier());
-            boolean canBeMapped = false;
-
-
-
-            if (identifiersToId.get(moduleHolder.placeholderFor) != null) {
-                canBeMapped = true;
-            }
+            Integer nameExistingId = identifiersToId.get(moduleHolder.getInternalIdentifier());
+            boolean canBeMappedImmediately = identifiersToId.get(moduleHolder.getIdentifier()) != null;
 
 
             // Check if the identifier we're trying to add already exists.
@@ -206,17 +219,17 @@ public interface ModuleLike {
                 // The name we're trying to add already exists. This is strange and normally shouldn't be the case
                 // Warn about double registration.
                 Constants.LOG.warn("Trying to register already registered ModuleHolder [id = {}], aka {}",
-                        nameExistingId, moduleHolder.getIdentifier());
+                        nameExistingId, moduleHolder.getInternalIdentifier());
                 featureCount.put(nameExistingId, featureCount.get(nameExistingId) + (moduleHolder.isFeature ? 1 : 0));
             } else {
                 // The ModuleHolder is not yet specified. We can safely add it as a new ModuleHolder.
                 Integer newId = moduleSingleId--;
-                identifiersToId.put(moduleHolder.getIdentifier(), newId);
+                identifiersToId.put(moduleHolder.getInternalIdentifier(), newId);
                 knownModuleLikeIdentifiers.put(newId, new HashSet<>());
-                knownModuleLikeIdentifiers.get(newId).add(moduleHolder.getIdentifier());
+                knownModuleLikeIdentifiers.get(newId).add(moduleHolder.getInternalIdentifier());
                 featureCount.put(newId, moduleHolder.isFeature ? 1 : 0);
                 containedIn.put(newId, new HashSet<>());
-                if (!canBeMapped) {
+                if (!canBeMappedImmediately) {
                     holderMapping.put(newId, null);
                     holderNotMapped.add(moduleHolder.placeholderFor);
                 } else {
