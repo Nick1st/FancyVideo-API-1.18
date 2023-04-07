@@ -26,7 +26,9 @@ public class MutableModuleSingle extends ModuleSingle implements ModuleLike{
      * @param isFeature If this Module is a feature.
      * @return The MutableModuleSingle itself.
      * @since 3.0.0
+     * @deprecated
      */
+    @Deprecated(forRemoval = true)
     public MutableModuleSingle isFeature(boolean isFeature) {
         this.isFeature = isFeature;
         return this;

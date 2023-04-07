@@ -1,22 +1,15 @@
 package nick1st.fancyvideo.api_consumer.requester;
 
-import com.google.common.graph.MutableNetwork;
 import com.google.common.graph.MutableValueGraph;
-import com.google.common.graph.NetworkBuilder;
 import com.google.common.graph.ValueGraphBuilder;
 import net.minecraft.resources.ResourceLocation;
-import nick1st.fancyvideo.api_consumer.natives.ModuleGroup;
-import nick1st.fancyvideo.api_consumer.natives.ModuleHolder;
 import nick1st.fancyvideo.api_consumer.natives.ModuleLike;
-import nick1st.fancyvideo.api_consumer.natives.ModuleSingle;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * This class features an internal request registry class, as well as a {@link #New(ResourceLocation)} method. A
- * Request needs to be registered in order to be satisfied. Registration happens in the
- * {@link #New(ResourceLocation)} method. Building is done later by the library.
+ * A Request needs to be registered in order to be satisfied. Registration happens in the
+ * {@link nick1st.fancyvideo.api.eventbus.event.EnvironmentSetupEvent.RegisterRequests} event.
  * @since 3.0.0
  * @author Nick1st - <a href="mailto:nick1st.dev@gmail.com">{@literal <nick1st.dev@gmail.com>}</a>
  */
@@ -24,14 +17,18 @@ public class Request {
 
     static Set<Request> allRequests = new HashSet<>();
 
-    private final ResourceLocation requested;
+    public final ResourceLocation requested;
+    private final String requestedBy;
 
     /**
      * Private constructor for internal use only. Use the {@link #New(ResourceLocation)} method instead.
      * @since 3.0.0
      */
-    private Request(ResourceLocation requestedModuleLike) {
+    public Request(ResourceLocation requestedModuleLike, String modid) {
         this.requested = requestedModuleLike;
+        this.requestedBy = modid;
+        Integer id = ModuleLike.Registry.identifiersToId.get(requestedModuleLike);
+        ModuleLike.Registry.featureCount.merge(id, 1, Integer::sum);
     }
 
     /**
@@ -40,7 +37,7 @@ public class Request {
      * @since 3.0.0
      */
     public static void New(ResourceLocation requestedModuleLike) {
-        Request _this = new Request(requestedModuleLike);
+        Request _this = new Request(requestedModuleLike, "");
         allRequests.add(_this);
     }
 

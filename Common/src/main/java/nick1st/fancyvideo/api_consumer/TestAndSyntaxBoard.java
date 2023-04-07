@@ -15,30 +15,25 @@ public class TestAndSyntaxBoard {
                 .build();
         // Request a ModuleGroup
         Request.New(new MutableModuleGroup(new ResourceLocation(Constants.MOD_ID, "groups/base"))
-                .contain(new ModuleHolder(new ResourceLocation(Constants.MOD_ID + ":groups/core"), false).build())
-                .contain(new ModuleHolder(new ResourceLocation("vlc_modules", "plugin/video_output/testout"),
-                        false).build())
+                .contain(new ModuleHolder(new ResourceLocation(Constants.MOD_ID + ":groups/core")).build())
+                .contain(new ModuleHolder(new ResourceLocation("vlc_modules", "plugin/video_output/testout")).build())
                 .isFeature(true)
                 .build()
         );
 
         new MutableModuleGroup(new ResourceLocation(Constants.MOD_ID + ":groups/core"))
                 .contain(new MutableModuleSingle(new ResourceLocation("vlc_modules", "libvlc")).build())
-                .contain(new ModuleHolder(new ResourceLocation("vlc_modules:libvlccore"), true)
-                        .build())
+                .contain(new ModuleHolder(new ResourceLocation("vlc_modules:libvlccore")).build())
                 .build();
 
         new MutableModuleGroup(new ResourceLocation("test:groups/double"))
-                .contain(new ModuleHolder(new ResourceLocation("vlc_modules:libvlc"), true)
-                        .build())
-                .contain(new ModuleHolder(new ResourceLocation("vlc_modules:libvlccore"), true)
-                        .build())
+                .contain(new ModuleHolder(new ResourceLocation("vlc_modules:libvlc")).build())
+                .contain(new ModuleHolder(new ResourceLocation("vlc_modules:libvlccore")).build())
                 .build();
 
         new MutableModuleGroup(new ResourceLocation(Constants.MOD_ID, "groups/basedouble"))
-                .contain(new ModuleHolder(new ResourceLocation("test:groups/double"), false).build())
-                .contain(new ModuleHolder(new ResourceLocation("vlc_modules", "plugin/video_output/testout"),
-                        false).build())
+                .contain(new ModuleHolder(new ResourceLocation("test:groups/double")).build())
+                .contain(new ModuleHolder(new ResourceLocation("vlc_modules", "plugin/video_output/testout")).build())
                 .isFeature(true)
                 .build();
 

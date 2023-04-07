@@ -81,7 +81,9 @@ public class MutableModuleGroup implements ModuleLike {
      * @param isFeature If this ModuleGroup is a feature.
      * @return The MutableModuleGroup itself.
      * @since 3.0.0
+     * @deprecated
      */
+    @Deprecated(forRemoval = true)
     public MutableModuleGroup isFeature(boolean isFeature) {
         this.isFeature = isFeature;
         return this;
@@ -94,7 +96,7 @@ public class MutableModuleGroup implements ModuleLike {
      *         get a reference to the unmodifiable ModuleGroup.
      * @since 3.0.0
      */
-    public ResourceLocation build() {
+    public ResourceLocation build() { // TODO This should build all contained MutableModuleGroups
         ModuleLike.Registry.tryAddingGroup(this);
         return identifier;
     }

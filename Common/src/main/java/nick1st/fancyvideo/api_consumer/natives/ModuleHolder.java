@@ -23,10 +23,10 @@ public class ModuleHolder implements ModuleLike{
      * @param isFeature If this ModuleHolder should add a feature mark to the resolved {@link ModuleLike}.
      * @since 3.0.0
      */
-    public ModuleHolder(ResourceLocation internalIdentifier, boolean isFeature) { // TODO
+    public ModuleHolder(ResourceLocation internalIdentifier) { // TODO this really should be a holder for only groups, as ModuleSingle are instantly creatable from a Holder, so there really is no point in them being able to be a holder
         this.internalIdentifier = new ResourceLocation("placeholder_" + internalIdentifier.getNamespace(), internalIdentifier.getPath());
         this.placeholderFor = internalIdentifier;
-        this.isFeature = isFeature;
+        this.isFeature = false; // TODO Remove this, this is an outdated way
     }
 
     /**
