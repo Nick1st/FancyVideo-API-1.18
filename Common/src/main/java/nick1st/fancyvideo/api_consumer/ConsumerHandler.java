@@ -8,10 +8,14 @@ import nick1st.fancyvideo.api.eventbus.EventException;
 import nick1st.fancyvideo.api.eventbus.FancyVideoEventBus;
 import nick1st.fancyvideo.api.eventbus.event.EnvironmentSetupEvent;
 import nick1st.fancyvideo.api_consumer.natives.ModuleLike;
+import nick1st.fancyvideo.api_consumer.provider.Provider;
 import nick1st.fancyvideo.api_consumer.requester.Request;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static nick1st.fancyvideo.api_consumer.ConsumerHandler.RequestRegistry.ModuleRequestGraph.ROOT_NODE;
 
 /**
  * This class is responsible for handling ApiConsumers during API-Initialisation (similar to the FML Loading Bus).
@@ -29,12 +33,12 @@ public class ConsumerHandler {
      */
     static void init() {
         Constants.LOG.info("Starting ApiConsumer loading");
-        Set<ApiConsumer> apiConsumers = ServiceLoader.load(ApiConsumer.class).stream().map(serviceLoader -> serviceLoader.get()).collect(Collectors.toSet());
+        Set<ApiConsumer> apiConsumers = ServiceLoader.load(ApiConsumer.class).stream().map(ServiceLoader.Provider::get).collect(Collectors.toSet());
 
         Constants.LOG.info("Found the following ApiConsumers:");
         apiConsumers.forEach(consumer -> Constants.LOG.info("   -> " + consumer.getConsumerId()));
 
-        Constants.LOG.trace("Registering Loading-Events");
+        Constants.LOG.debug("Registering Loading-Events");
         List<Class<?>[]> eventClasses = apiConsumers.stream().map(ApiConsumer::registerEvents).toList();
         eventClasses.forEach(classes -> Arrays.stream(classes).forEach(clazz -> {
             try {
@@ -44,16 +48,23 @@ public class ConsumerHandler {
             }
         }));
 
-        Constants.LOG.trace("Try to get some idea of vlc dependency structure / Getting ModuleGroups");
+        Constants.LOG.debug("Try to get some idea of vlc dependency structure / Getting ModuleGroups");
         FancyVideoEventBus.getInstance().runEvent(new EnvironmentSetupEvent.ModuleGroups()); // Meant for Intermod-Comms
 
-        Constants.LOG.trace("Got ModuleGroups. All further Holders need to be instantiated AFTER their group was build"); // TODO Harden the implementation by checking for this condition
+        Constants.LOG.debug("Got ModuleGroups. All further Holders need to be instantiated AFTER their group was build"); // TODO Harden the implementation by checking for this condition
         RequestRegistry.ModuleRequestGraph.compileModuleLikeRegistry();
 
-        Constants.LOG.trace("Register Requests");
+        Constants.LOG.debug("Register Requests");
         FancyVideoEventBus.getInstance().runEvent(new EnvironmentSetupEvent.RegisterRequests(RequestRegistry.REQUEST_REGISTRY));
         RequestRegistry.ModuleRequestGraph.buildAllRequests(); // Here we got our graph. Half-way done. Now only the provider side is left...
 
+        Constants.LOG.debug("Register Providers");
+        FancyVideoEventBus.getInstance().runEvent(new EnvironmentSetupEvent.RegisterProviders(ProviderRegistry.PROVIDER_REGISTRY));
+        ProviderRegistry.compileRegistry();
+
+        Constants.LOG.debug("Trying to figure out the optimal Environment");
+        Map<Integer, Integer> featureCountMap = RequestRegistry.getTrueFeatureCountForModules();
+        ProviderRegistry.tryFigureOutOptimalProviderSet(featureCountMap);
     }
 
     public static class RequestRegistry {
@@ -88,10 +99,19 @@ public class ConsumerHandler {
             private static void buildRequest(Request request) {
                 ResourceLocation thisRequestsMainNode = request.requested;
                 Integer mainNode = ModuleLike.Registry.identifiersToId.get(thisRequestsMainNode);
-                recursivelyCompleteGraph(ROOT_NODE, mainNode);
+                recursivelyCompleteGraph(ROOT_NODE, mainNode, new HashSet<>(), new HashSet<>());
             }
 
-            private static void recursivelyCompleteGraph(Integer rootNode, Integer node) {
+            private static void recursivelyCompleteGraph(Integer rootNode, Integer node, Set<Integer> visited, Set<Integer> beingVisited) { // TODO We can't build this recursively, as this will throw a StackOverflowExecption, when the graph contains a circle (and we don't check for this yet.)
+                if (beingVisited.contains(node)) {
+                    throw new RuntimeException("Found loop in graph.");
+                }
+                if (visited.contains(node)) {
+                    return;
+                }
+                beingVisited.add(node);
+                visited.add(node);
+
                 Set<ResourceLocation> topLocation = ModuleLike.Registry.knownModuleLikeIdentifiers.get(node);
                 if (topLocation == null || topLocation.isEmpty()) {
                     throw new RuntimeException("Somehow got Node without known Identifiers.");
@@ -107,10 +127,15 @@ public class ConsumerHandler {
                     // We got a ModuleGroup
                     graph.putEdgeValue(node, rootNode, 0);
                     graph.putEdgeValue(node, ROOT_NODE, ModuleLike.Registry.featureCount.get(node));
-                    ModuleLike.Registry.contains.get(node).forEach(moduleLike -> recursivelyCompleteGraph(node, moduleLike));
+                    for (Integer moduleLike : ModuleLike.Registry.contains.get(node)) {
+                        recursivelyCompleteGraph(node, moduleLike, visited, beingVisited);
+                    }
+//                    ModuleLike.Registry.contains.get(node).forEach(moduleLike -> recursivelyCompleteGraph(node, moduleLike));
                 } else {
                     throw new RuntimeException("Somehow got an unidentified ModuleLike.");
                 }
+
+                beingVisited.remove(node);
             }
 
 
@@ -137,7 +162,8 @@ public class ConsumerHandler {
                         ModuleLike.Registry.featureCount.put(mappedFrom, 0);
                     });
                     ModuleLike.Registry.containedIn.get(mappedTo).addAll(ModuleLike.Registry.containedIn.get(mappedFrom));
-                    ModuleLike.Registry.containedIn.remove(mappedFrom);
+                    //ModuleLike.Registry.containedIn.put(mappedFrom, new HashSet<>());
+                    ModuleLike.Registry.contains.remove(mappedFrom);
                 });
 
                 // Now check and fix different named holders creating different registry entries
@@ -194,6 +220,96 @@ public class ConsumerHandler {
 
                 return !remap.isEmpty();
             }
+        }
+
+        public static Map<Integer, Integer> getTrueFeatureCountForModules() {
+            Map<Integer, Integer> featureCountMap = new HashMap<>();
+
+            Iterator<Integer> predecessors = graph.predecessors(ROOT_NODE).iterator();
+            for (Iterator<Integer> it = predecessors; it.hasNext(); ) {
+                Integer predecessor = it.next();
+                _getTrueFeatureCountForModules(predecessor, graph.edgeValue(predecessor, ROOT_NODE).get(), featureCountMap);
+            }
+
+            return featureCountMap;
+        }
+
+        public static void _getTrueFeatureCountForModules(Integer parentNode, Integer parentCount, Map<Integer, Integer> featureCountMap) {
+            if (ModuleLike.Registry.knownModuleLikeIdentifiers.get(parentNode).stream().findFirst().get().getNamespace().equals("vlc_modules")) {
+                // We got a ModuleSingle
+                featureCountMap.merge(parentNode, parentCount, Integer::sum);
+            } else {
+               // We got a ModuleGroup
+                Iterator<Integer> predecessors = graph.predecessors(parentNode).iterator();
+                for (Iterator<Integer> it = predecessors; it.hasNext(); ) {
+                    Integer predecessor = it.next();
+                    _getTrueFeatureCountForModules(predecessor, parentCount, featureCountMap);
+                }
+            }
+        }
+    }
+
+    public static class ProviderRegistry {
+        private static final ProviderRegistry PROVIDER_REGISTRY = new ProviderRegistry();
+        private static final MutableValueGraph<Integer, Integer> graph = ValueGraphBuilder.directed().build();
+
+        private final Set<Provider> registry = new HashSet<>();
+        private final Map<Integer, Set<Provider>> modularProviders = new HashMap<>();
+        private final Map<Integer, Set<Provider>> groupProviders = new HashMap<>();
+
+        // TODO Fill those with values
+        private final Map<Provider, Integer> groupExclusiveFeatureCount = new HashMap<>();
+        private final Map<Provider, Integer> groupUnusedModuleCount = new HashMap<>();
+
+        private ProviderRegistry() {
+        }
+
+        public void add(Provider provider) {
+            registry.add(provider);
+        }
+
+        public void addAll(Provider... providers) {
+            registry.addAll(List.of(providers));
+        }
+
+        private static void compileRegistry() {
+            PROVIDER_REGISTRY.registry.forEach(provider -> {
+                if (!provider.isValid()) {
+                    // Empty as non-valid providers should be ignored
+                } else if (!provider.isGroupProvider()) {
+                    // The provider we got is a modular one
+                    for (ResourceLocation moduleLocation : provider.providedModules()) {
+                        Integer moduleId = ModuleLike.Registry.identifiersToId.get(moduleLocation);
+                        PROVIDER_REGISTRY.modularProviders.merge(moduleId, new HashSet<>(List.of(provider)),
+                                (oldValue, newValue) -> Stream.of(oldValue, newValue).flatMap(Set::stream).collect(Collectors.toSet()));
+                    }
+                } else {
+                    // The provider we got is a group one
+                    for (ResourceLocation moduleLocation : provider.providedModules()) {
+                        Integer moduleId = ModuleLike.Registry.identifiersToId.get(moduleLocation);
+                        PROVIDER_REGISTRY.groupProviders.merge(moduleId, new HashSet<>(List.of(provider)),
+                                (oldValue, newValue) -> Stream.of(oldValue, newValue).flatMap(Set::stream).collect(Collectors.toSet()));
+                    }
+                }
+            });
+        }
+
+        private static void tryFigureOutOptimalProviderSet(Map<Integer, Integer> featureCountMap) {
+            featureCountMap.forEach((moduleId, featureCount) -> {
+                if (!PROVIDER_REGISTRY.modularProviders.containsKey(moduleId) &&
+                        PROVIDER_REGISTRY.groupProviders.containsKey(moduleId)) {
+                    // This module only has a group provider
+                    PROVIDER_REGISTRY.groupProviders.get(moduleId).forEach(provider ->
+                            PROVIDER_REGISTRY.groupExclusiveFeatureCount.merge(provider, featureCount, Integer::sum));
+                }
+            });
+            PROVIDER_REGISTRY.groupProviders.forEach((moduleId, providerSet) -> {
+                if (!featureCountMap.containsKey(moduleId)) {
+                    // Module was not requested
+                    providerSet.forEach(provider ->
+                            PROVIDER_REGISTRY.groupUnusedModuleCount.merge(provider, 1, Integer::sum));
+                }
+            });
         }
     }
 }

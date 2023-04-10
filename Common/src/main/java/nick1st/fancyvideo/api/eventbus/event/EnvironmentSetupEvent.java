@@ -21,7 +21,6 @@ public class EnvironmentSetupEvent {
     }
 
     public static class RegisterRequests extends Event {
-
         public final ConsumerHandler.RequestRegistry REGISTRY;
 
         public RegisterRequests(ConsumerHandler.RequestRegistry requestRegistry) {
@@ -36,6 +35,12 @@ public class EnvironmentSetupEvent {
     }
 
     public static class RegisterProviders extends Event {
+        public final ConsumerHandler.ProviderRegistry REGISTRY;
+
+        public RegisterProviders(ConsumerHandler.ProviderRegistry providerRegistry) {
+            super();
+            REGISTRY = providerRegistry;
+        }
 
         @Override
         public boolean isCancelable() {

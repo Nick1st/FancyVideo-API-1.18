@@ -25,10 +25,15 @@ public class Request {
      * @since 3.0.0
      */
     public Request(ResourceLocation requestedModuleLike, String modid) {
-        this.requested = requestedModuleLike;
         this.requestedBy = modid;
         Integer id = ModuleLike.Registry.identifiersToId.get(requestedModuleLike);
-        ModuleLike.Registry.featureCount.merge(id, 1, Integer::sum);
+        if (ModuleLike.Registry.holderMapping.containsKey(id)) {
+            this.requested = ModuleLike.Registry.knownModuleLikeIdentifiers.get(ModuleLike.Registry.holderMapping.get(id)).stream().findFirst().get();
+            ModuleLike.Registry.featureCount.merge(ModuleLike.Registry.holderMapping.get(id), 1, Integer::sum);
+        } else {
+            this.requested = requestedModuleLike;
+            ModuleLike.Registry.featureCount.merge(id, 1, Integer::sum);
+        }
     }
 
     /**
