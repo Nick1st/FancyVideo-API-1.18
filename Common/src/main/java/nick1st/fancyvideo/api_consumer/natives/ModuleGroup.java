@@ -13,7 +13,7 @@ import java.util.Set;
  * @since 3.0.0
  * @author Nick1st - <a href="mailto:nick1st.dev@gmail.com">{@literal <nick1st.dev@gmail.com>}</a>
  */
-public class ModuleGroup implements ModuleLike {
+public final class ModuleGroup implements ModuleLike {
     public ModuleSingle mainModule;
     //private final Set<ModuleLike> containedModules = new HashSet<>(); // Unused
     final Set<Integer> containedModulesId = new HashSet<>();

@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
  * @since 3.0.0
  * @author Nick1st - <a href="mailto:nick1st.dev@gmail.com">{@literal <nick1st.dev@gmail.com>}</a>
  */
-public interface ModuleLike {
+public sealed interface ModuleLike permits ModuleHolder, ModuleGroup, ModuleSingle, MutableModuleSingle, MutableModuleGroup {
 
     ResourceLocation getIdentifier();
 
@@ -33,8 +33,6 @@ public interface ModuleLike {
         public static final Set<ResourceLocation> holderNotMapped = new HashSet<>();
         // Integer: Id | Integer: MappedTo
         public static final Map<Integer, Integer> holderMapping = new HashMap<>();
-        // Integer: Id | Set<ModuleLike>: ContainedModuleLikes
-        public static final BiMap<Integer, Set<ModuleLike>> groupDefinitions = HashBiMap.create();
         public static final BiMap<Integer, Set<Integer>> contains = HashBiMap.create();
         // ResourceLocation: Identifier | Integer: Id
         public static final Map<ResourceLocation, Integer> identifiersToId = new HashMap<>();
@@ -48,7 +46,7 @@ public interface ModuleLike {
         private static int moduleGroupId = 1;
 
         /**
-         * Private Constructor to hide the public one.
+         * Private Constructor to hide the implicit public one.
          * @since 3.0.0
          */
         private Registry() {

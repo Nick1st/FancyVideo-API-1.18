@@ -7,7 +7,7 @@ import net.minecraft.resources.ResourceLocation;
  * @since 3.0.0
  * @author Nick1st - <a href="mailto:nick1st.dev@gmail.com">{@literal <nick1st.dev@gmail.com>}</a>
  */
-public class MutableModuleSingle extends ModuleSingle implements ModuleLike{
+public final class MutableModuleSingle extends ModuleSingle implements ModuleLike {
     boolean isFeature;
     private boolean isAlreadyBuild;
 
@@ -45,6 +45,7 @@ public class MutableModuleSingle extends ModuleSingle implements ModuleLike{
         if (isAlreadyBuild) {
             throw new UnsupportedOperationException("MutableModuleSingle already build.");
         }
+        ModuleLikeRegistry.addModuleLikeOfAnyKind(new ModuleSingle(this.identifier, 0));
         ModuleLike.Registry.tryAddingModule(this);
         isAlreadyBuild = true;
         return identifier;

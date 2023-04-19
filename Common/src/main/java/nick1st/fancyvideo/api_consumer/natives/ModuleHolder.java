@@ -5,11 +5,11 @@ import net.minecraft.resources.ResourceLocation;
 import java.util.Objects;
 
 /**
- * This class can be used to act as a placeholder for a {@link ModuleGroup} or a {@link ModuleSingle}.
+ * This class can be used to act as a placeholder for a {@link ModuleGroup}.
  * @since 3.0.0
  * @author Nick1st - <a href="mailto:nick1st.dev@gmail.com">{@literal <nick1st.dev@gmail.com>}</a>
  */
-public class ModuleHolder implements ModuleLike{
+public final class ModuleHolder implements ModuleLike{
 
     private final ResourceLocation internalIdentifier;
     final ResourceLocation placeholderFor;
@@ -49,6 +49,7 @@ public class ModuleHolder implements ModuleLike{
      */
     public ResourceLocation build() {
         ModuleLike.Registry.tryAddingHolder(this);
+        ModuleLikeRegistry.addModuleLikeOfAnyKind(this);
         return internalIdentifier;
     }
 

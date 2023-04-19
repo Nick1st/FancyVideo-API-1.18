@@ -10,7 +10,7 @@ import java.util.Objects;
  * @since 3.0.0
  * @author Nick1st - <a href="mailto:nick1st.dev@gmail.com">{@literal <nick1st.dev@gmail.com>}</a>
  */
-public class ModuleSingle implements ModuleLike {
+public sealed class ModuleSingle implements ModuleLike permits MutableModuleSingle{
     private final ModulePOJO modulePOJO;
     private final int requestCount;
     final ResourceLocation identifier;

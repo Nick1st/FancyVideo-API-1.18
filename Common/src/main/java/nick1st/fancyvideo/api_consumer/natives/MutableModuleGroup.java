@@ -14,7 +14,7 @@ import java.util.Set;
  * @since 3.0.0
  * @author Nick1st - <a href="mailto:nick1st.dev@gmail.com">{@literal <nick1st.dev@gmail.com>}</a>
  */
-public class MutableModuleGroup implements ModuleLike {
+public final class MutableModuleGroup implements ModuleLike {
     final Set<ModuleLike> containedModules = new HashSet<>();
     boolean isFeature;
     final ResourceLocation identifier;
@@ -97,6 +97,7 @@ public class MutableModuleGroup implements ModuleLike {
      * @since 3.0.0
      */
     public ResourceLocation build() { // TODO This should build all contained MutableModuleGroups
+        ModuleLikeRegistry.addModuleLikeOfAnyKind(this);
         ModuleLike.Registry.tryAddingGroup(this);
         return identifier;
     }
