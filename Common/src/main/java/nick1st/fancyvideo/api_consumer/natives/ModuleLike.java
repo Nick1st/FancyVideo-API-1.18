@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
  * @since 3.0.0
  * @author Nick1st - <a href="mailto:nick1st.dev@gmail.com">{@literal <nick1st.dev@gmail.com>}</a>
  */
-public sealed interface ModuleLike permits ModuleHolder, ModuleGroup, ModuleSingle, MutableModuleSingle, MutableModuleGroup {
+public sealed interface ModuleLike permits ModuleHolder, ModuleGroup, ModuleSingle, MutableModuleGroup {
 
     ResourceLocation getIdentifier();
 
@@ -166,7 +166,7 @@ public sealed interface ModuleLike permits ModuleHolder, ModuleGroup, ModuleSing
          * @param moduleSingle The ModuleSingle to add.
          * @since 3.0.0
          */
-        protected static void tryAddingModule(MutableModuleSingle moduleSingle) {
+        protected static void tryAddingModule(ModuleSingle moduleSingle) {
             Integer nameExistingId = identifiersToId.get(moduleSingle.getIdentifier());
 
             // Check that the identifier we're trying to add does not already exist.
@@ -182,7 +182,7 @@ public sealed interface ModuleLike permits ModuleHolder, ModuleGroup, ModuleSing
             }
 
             // Increase the featureCount if this ModuleSingle provides a feature.
-            featureCount.put(nameExistingId, featureCount.get(nameExistingId) + (moduleSingle.isFeature ? 1 : 0));
+            featureCount.put(nameExistingId, featureCount.get(nameExistingId)); // FIXME MODIFIED, but this is likely to be removed anyway
 
             // Check if there are holder mappings to fill and do so if appropriate
             if (holderNotMapped.contains(moduleSingle.identifier)) {
@@ -198,7 +198,7 @@ public sealed interface ModuleLike permits ModuleHolder, ModuleGroup, ModuleSing
             if (id == null) {
                 return null;
             } else {
-                return new ModuleSingle(groupIdentifier, featureCount.get(id));
+                return new ModuleSingle(groupIdentifier);
             }
         }
 

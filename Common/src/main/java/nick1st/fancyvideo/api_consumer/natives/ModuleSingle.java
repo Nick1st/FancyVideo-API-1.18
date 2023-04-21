@@ -10,24 +10,23 @@ import java.util.Objects;
  * @since 3.0.0
  * @author Nick1st - <a href="mailto:nick1st.dev@gmail.com">{@literal <nick1st.dev@gmail.com>}</a>
  */
-public sealed class ModuleSingle implements ModuleLike permits MutableModuleSingle{
+public final class ModuleSingle implements ModuleLike {
     private final ModulePOJO modulePOJO;
-    private final int requestCount;
+
     final ResourceLocation identifier;
 
+
     /**
-     * Internal constructor to create non-mutable ModuleSingle instances.
+     * Constructor to create ModuleSingle instances.
      * @param identifier The identifier for this ModuleSingle.
-     * @param requestCount How often this ModuleSingle was marked as a feature.
      * @since 3.0.0
      */
-    ModuleSingle(@Nonnull ResourceLocation identifier, int requestCount) {
+    public ModuleSingle(@Nonnull ResourceLocation identifier) {
         if (!identifier.getNamespace().equals("vlc_modules")) {
             throw new IllegalArgumentException("Illegal ModuleSingle identifier. ModuleSingle identifier namespace must be 'vlc_modules'.");
         }
         this.modulePOJO = new ModulePOJO(identifier.getPath());
         this.identifier = identifier;
-        this.requestCount = requestCount;
     }
 
     /**

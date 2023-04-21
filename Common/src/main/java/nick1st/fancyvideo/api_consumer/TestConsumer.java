@@ -5,8 +5,8 @@ import nick1st.fancyvideo.Constants;
 import nick1st.fancyvideo.api.eventbus.FancyVideoEvent;
 import nick1st.fancyvideo.api.eventbus.event.EnvironmentSetupEvent;
 import nick1st.fancyvideo.api_consumer.natives.ModuleHolder;
+import nick1st.fancyvideo.api_consumer.natives.ModuleSingle;
 import nick1st.fancyvideo.api_consumer.natives.MutableModuleGroup;
-import nick1st.fancyvideo.api_consumer.natives.MutableModuleSingle;
 import nick1st.fancyvideo.api_consumer.provider.Provider;
 import nick1st.fancyvideo.api_consumer.requester.Request;
 import org.jetbrains.annotations.NotNull;
@@ -36,13 +36,13 @@ public class TestConsumer implements ApiConsumer {
     @FancyVideoEvent
     public static void registerModuleGroups(EnvironmentSetupEvent.ModuleGroups event) {
         new MutableModuleGroup(new ResourceLocation(Constants.MOD_ID + ":groups/core"))
-                .contain(new MutableModuleSingle(new ResourceLocation("vlc_modules", "libvlc")).build())
-                .contain(new MutableModuleSingle(new ResourceLocation("vlc_modules:libvlccore")).build())
+                .contain(new ModuleSingle(new ResourceLocation("vlc_modules", "libvlc")).getIdentifier())
+                .contain(new ModuleSingle(new ResourceLocation("vlc_modules:libvlccore")).getIdentifier())
                 .build();
 
         new MutableModuleGroup(new ResourceLocation(Constants.MOD_ID + ":groups/test"))
-                .contain(new MutableModuleSingle(new ResourceLocation("vlc_modules", "libvlc")).build())
-                .contain(new MutableModuleSingle(new ResourceLocation("vlc_modules:plugin/video_output/testout")).build())
+                .contain(new ModuleSingle(new ResourceLocation("vlc_modules", "libvlc")).getIdentifier())
+                .contain(new ModuleSingle(new ResourceLocation("vlc_modules:plugin/video_output/testout")).getIdentifier())
                 .build();
     }
 
@@ -51,7 +51,7 @@ public class TestConsumer implements ApiConsumer {
         event.REGISTRY.add(
             new Request(new MutableModuleGroup(new ResourceLocation(Constants.MOD_ID, "groups/base"))
                 .contain(new ModuleHolder(new ResourceLocation(Constants.MOD_ID + ":groups/core")).build())
-                .contain(new MutableModuleSingle(new ResourceLocation("vlc_modules", "plugin/video_output/testout")).build())
+                .contain(new ModuleSingle(new ResourceLocation("vlc_modules", "plugin/video_output/testout")).getIdentifier())
                 .build(),
                 "testmod"
             )
@@ -72,8 +72,8 @@ public class TestConsumer implements ApiConsumer {
                     @Override
                     public ResourceLocation[] providedModules() {
                         Set<ResourceLocation> providedModules = new HashSet<>();
-                        providedModules.add(new MutableModuleSingle(new ResourceLocation("vlc_modules:libvlc")).build());
-                        providedModules.add(new MutableModuleSingle(new ResourceLocation("vlc_modules", "plugin/video_output/testout")).build());
+                        providedModules.add(new ModuleSingle(new ResourceLocation("vlc_modules:libvlc")).getIdentifier());
+                        providedModules.add(new ModuleSingle(new ResourceLocation("vlc_modules", "plugin/video_output/testout")).getIdentifier());
                         return providedModules.toArray(new ResourceLocation[0]);
                     }
 
@@ -94,9 +94,9 @@ public class TestConsumer implements ApiConsumer {
                     @Override
                     public ResourceLocation[] providedModules() {
                         Set<ResourceLocation> providedModules = new HashSet<>();
-                        providedModules.add(new MutableModuleSingle(new ResourceLocation("vlc_modules:libvlc")).build());
-                        providedModules.add(new MutableModuleSingle(new ResourceLocation("vlc_modules:libvlccore")).build());
-                        providedModules.add(new MutableModuleSingle(new ResourceLocation("vlc_modules:libvlclul")).build());
+                        providedModules.add(new ModuleSingle(new ResourceLocation("vlc_modules:libvlc")).getIdentifier());
+                        providedModules.add(new ModuleSingle(new ResourceLocation("vlc_modules:libvlccore")).getIdentifier());
+                        providedModules.add(new ModuleSingle(new ResourceLocation("vlc_modules:libvlclul")).getIdentifier());
                         return providedModules.toArray(new ResourceLocation[0]);
                     }
 
