@@ -1,0 +1,66 @@
+//######################################################################################################################
+//                                                Project Dependencies
+//######################################################################################################################
+configurations {
+    minecraftLibrary.extendsFrom nonMCLibrary
+}
+
+dependencies {
+    minecraft libs.forge
+    compileOnly project.parent.childProjects.get('Common')
+}
+
+tasks.withType(JavaCompile) {
+    source(project.parent.childProjects.get('Common').sourceSets.main.allSource)
+}
+
+processResources {
+    from project.parent.childProjects.get('Common').sourceSets.main.resources
+}
+
+minecraft {
+    mappings channel: 'parchment', version: parchment_version
+}
+
+//######################################################################################################################
+//                                                    Build Tasks
+//######################################################################################################################
+processResources {
+    outputs.upToDateWhen { false }
+
+    copy {
+        from new File(rootProject.projectDir.path + "/shared-resources/mods.toml")
+        into new File(projectDir.path + "/src/main/resources/META-INF/")
+    }
+    copy {
+        from new File(rootProject.projectDir.path + "/shared-resources/FancyVideo-API_Plugin_CDN_Banner.png") // TODO Softcode
+        into new File(projectDir.path + "/src/main/resources/") // TODO Move to the new common parent configuration instead
+    }
+
+
+    filesMatching('META-INF/mods.toml') {
+        expand([
+                // Version ranges
+                'forgeversionrange': '[' + (libs.forge.get().versionConstraint.requiredVersion.split('-')[1]).split('\\.')[0] + ',)',
+                'minecraftversionrange': '[' + minecraft_version + ',' + minecraft_version_max_forge + ']',
+
+                // License information
+                'license': license,
+                'credits': project.credits,
+
+                // Project urls
+                'issues': issue_url, //TODO Change the source repo one day
+                'distribution': distributions,
+
+                // Mod information
+                'modid': project.truename.replaceAll('-', '_').toLowerCase(),
+                'version': version,
+                'name': project.truename.replaceAll('-', ' '),
+                'logo': logo,
+                'author': author + " (" + author_email + ")",
+                'description': mod_description
+        ])
+    }
+}
+
+jar.finalizedBy('reobfJar')

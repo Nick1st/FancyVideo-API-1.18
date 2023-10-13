@@ -52,7 +52,7 @@ public record Constants() {
     public static final String ACCESS = "access";
 
     // No_Library_Mode
-    public static boolean NO_LIBRARY_MODE;
+    public static boolean NO_LIBRARY_MODE = true;
     public static final boolean DEBUG_NO_LIBRARY_MODE = false;
 
     // Empty DynamicResourceLocation

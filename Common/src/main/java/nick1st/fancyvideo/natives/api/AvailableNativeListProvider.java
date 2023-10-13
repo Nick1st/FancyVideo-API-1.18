@@ -1,9 +1,10 @@
 package nick1st.fancyvideo.natives.api;
 
+import it.unimi.dsi.fastutil.shorts.ShortComparators;
 import nick1st.fancyvideo.Constants;
 import org.apache.commons.compress.utils.IOUtils;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,7 +15,7 @@ import java.io.OutputStream;
  * You <b>MUST</b> implement {@link AvailableNativeListProvider#isListValid(int dllVersion)}.
  * @since 3.0.0
  */
-public interface AvailableNativeListProvider extends NativeListProviders{
+public interface AvailableNativeListProvider extends NativeListProviders, Comparable{
 
     /**
      * Normally the return value of this methode should be dependent on <br>
@@ -49,16 +50,12 @@ public interface AvailableNativeListProvider extends NativeListProviders{
      * @since 3.0.0
      */
     @Override
-    @Nullable
     NativeListEntry[] getModules();
 
-    /**
-     * @return A list of {@link NativeGroup}s provided by this service.
-     * @since 3.0.0
-     */
     @Override
-    @Nullable
-    NativeGroup[] getModuleGroups();
+    default short priority() {
+        return isSpecial() ? 100 : NativeListProviders.super.priority();
+    }
 
     /**
      * If this service provides a custom installation procedure it is launched by calling
@@ -67,7 +64,7 @@ public interface AvailableNativeListProvider extends NativeListProviders{
      * @return True if the custom installation was successful, false otherwise.
      * @since 3.0.0
      */
-    default boolean install() {
+    static boolean install() {
         return false;
     }
 
@@ -88,9 +85,28 @@ public interface AvailableNativeListProvider extends NativeListProviders{
             out.flush();
             out.close();
             return true;
-        } catch (IOException e) {
+        } catch (IOException | NullPointerException e) {
             Constants.LOG.error("An error occurred whilst trying to unpack native ", e);
             return false;
         }
+    }
+
+    /**
+     * Internal comparison method
+     * @param o the object to be compared.
+     * @return Same returns as {@link ShortComparators#NATURAL_COMPARATOR}
+     * @since 3.0.0
+     */
+    @Override
+    default int compareTo(@NotNull Object o) {
+        return ShortComparators.NATURAL_COMPARATOR.compare(this.priority(), ((AvailableNativeListProvider) o).priority());
+    }
+
+    /**
+     * Returns the installation type this module provider uses
+     * @return {@link InstallType}
+     */
+    default InstallType installType() {
+        return InstallType.MODULES;
     }
 }

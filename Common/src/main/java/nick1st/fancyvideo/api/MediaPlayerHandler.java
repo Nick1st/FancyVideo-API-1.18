@@ -34,6 +34,7 @@ import nick1st.fancyvideo.api.eventbus.event.PlayerRegistryEvent;
 import nick1st.fancyvideo.api.mediaPlayer.AbstractMediaPlayer;
 import nick1st.fancyvideo.api.mediaPlayer.MediaPlayerBase;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
+import uk.co.caprica.vlcj.factory.discovery.NativeDiscovery;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -80,7 +81,7 @@ public final class MediaPlayerHandler {
             if (Constants.NO_LIBRARY_MODE) {
                 MediaPlayerHandler.instance = new MediaPlayerHandler(null);
             } else {
-                MediaPlayerHandler.instance = new MediaPlayerHandler(new MediaPlayerFactory("--no-metadata-network-access", "--file-logging", "--logfile", "logs/vlc.log", "--logmode", "text", "--verbose", "2", "--no-quiet"));
+                MediaPlayerHandler.instance = new MediaPlayerHandler(new MediaPlayerFactory((NativeDiscovery) null, "--no-metadata-network-access", "--file-logging", "--logfile", "logs/vlc.log", "--logmode", "text", "--verbose", "2", "--no-quiet"));
             }
         }
         return MediaPlayerHandler.instance;

@@ -29,7 +29,6 @@ import com.sun.jna.NativeLibrary;
 import nick1st.fancyvideo.api.MediaPlayerHandler;
 import nick1st.fancyvideo.api.eventbus.EventException;
 import nick1st.fancyvideo.api.eventbus.FancyVideoEventBus;
-import nick1st.fancyvideo.api.eventbus.event.EnvironmentSetupedEvent;
 import nick1st.fancyvideo.api.eventbus.event.PlayerRegistryEvent;
 import nick1st.fancyvideo.config.SimpleConfig;
 import nick1st.fancyvideo.example.APIExample;
@@ -37,7 +36,6 @@ import nick1st.fancyvideo.internal.Arch;
 import nick1st.fancyvideo.internal.DLLHandler;
 import nick1st.fancyvideo.internal.LibraryMapping;
 import nick1st.fancyvideo.natives.api.NativeHelper;
-import nick1st.fancyvideo.natives.api.NativeListEntry;
 import org.apache.commons.lang3.SystemUtils;
 import uk.co.caprica.vlcj.binding.support.runtime.RuntimeUtil;
 import uk.co.caprica.vlcj.factory.discovery.NativeDiscovery;
@@ -49,7 +47,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
-import java.util.Set;
 
 import static uk.co.caprica.vlcj.binding.lib.LibVlc.libvlc_get_version;
 
@@ -81,14 +78,18 @@ public class CommonMainClass {
         }
 
         // Init natives the new way TODO Change comment
-        Set<NativeListEntry> unavailable = Set.copyOf(NativeHelper.load());
-        FancyVideoEventBus.getInstance().runEvent(new EnvironmentSetupedEvent(unavailable));
-
-
-        // Init natives
-        if (!onInit()) {
-            System.exit(-9515); // TODO Run in NO_LIBRARY mode instead of causing a "soft" crash
+        try {
+            NativeHelper.initNativeRegistry();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
+        // FancyVideoEventBus.getInstance().runEvent(new EnvironmentSetupedEvent(unavailable)); // TODO Fix this
+
+
+        // Init natives // TODO This is the old and unwanted method
+//        if (!onInit()) {
+//            System.exit(-9515); // TODO Run in NO_LIBRARY mode instead of causing a "soft" crash
+//        }
 
         Runtime.getRuntime().addShutdownHook(new ShutdownHook());
 

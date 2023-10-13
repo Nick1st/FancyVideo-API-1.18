@@ -1,69 +1,60 @@
+import com.matyrobbrt.gradle.jarinjar.data.JiJDependencyData
+import com.matyrobbrt.gradle.jarinjar.task.ForgeJarInJarTask
+import net.minecraftforge.gradle.common.util.ModConfig
+import net.minecraftforge.gradle.common.util.RunConfig
+
+import java.lang.reflect.Field
+
 //######################################################################################################################
 //                                              Build Plugin Declaration
 //######################################################################################################################
 plugins {
-    id 'com.github.johnrengelman.shadow' version '7.1.2'
-    id 'net.minecraftforge.gradle' version '5.+'
-    id 'eclipse'
+    alias(libs.plugins.forgeGradle)
+    alias(libs.plugins.forgeLiberian)
+    alias(libs.plugins.matyjij)
 }
 
-//######################################################################################################################
-//                                               Artefact Specification
-//######################################################################################################################
-if (minecraft_version_min_forge != minecraft_version) {
-    archivesBaseName = "${mod_name}-forge-${minecraft_version_min_forge}-${minecraft_version}"
-} else {
-    archivesBaseName = "${mod_name}-forge-${minecraft_version}"
-}
+apply from: rootProject.file('gradle/forge.gradle')
+apply from: rootProject.file('gradle/jarmaker.gradle')
 
 //######################################################################################################################
 //                                                Project Dependencies
 //######################################################################################################################
 dependencies {
-    minecraft "net.minecraftforge:forge:${minecraft_version_min_forge}-${forge_version}"
-    compileOnly project(":Common")
-}
-
-minecraft.runs.all {
-    lazyToken('minecraft_classpath') {
-        configurations.library.copyRecursive().resolve().collect {
-            it.absolutePath
-        }.join(File.pathSeparator)
+    for (Map.Entry<String, Project> entry: project(":InternalPlugins").childProjects) {
+        shadowed(entry.value.childProjects.get("Forge")) {
+            transitive = false
+        }
     }
 }
-
-tasks.withType(JavaCompile) {
-    source(project(":Common").sourceSets.main.allSource)
-}
-
-processResources {
-    from project(":Common").sourceSets.main.resources
-}
-
-minecraft {
-    mappings channel: 'official', version: minecraft_version_min_forge
-    
-    if (project.hasProperty('forge_ats_enabled') && project.findProperty('forge_ats_enabled').toBoolean()) {
-        accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
-        project.logger.debug('Forge Access Transformers are enabled for this project.')
-    }
 
 //######################################################################################################################
 //                                                 Run Configurations
 //######################################################################################################################
+minecraft.runs.all {
+    RunConfig config = (RunConfig) it
+    for (Map.Entry<String, Project> entry: project(":InternalPlugins").childProjects) {
+        Project theProject = entry.value.childProjects.get("Forge")
+        ModConfig mod = new ModConfig(theProject, entry.key)
+        List sources = new ArrayList()
+        sources.add(theProject.sourceSets.main)
+        mod.setSources(sources)
+        config.mods.add(mod)
+    }
+}
+
+minecraft {
     runs {
         client {
             workingDirectory project.file('run')
             ideaModule "${rootProject.name}.${project.name}.main"
-            taskName 'Client-1.19'
+            taskName 'Client-' + minecraft_version_max_forge
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
-            // This one's important, why is the default config so bad?
-            property 'log4j.configurationFile', 'config\\log4j2.xml'
             mods {
                 modClientRun {
                     source sourceSets.main
-                    source project(":Common").sourceSets.main
+//                    source project(":Common").sourceSets.main //This doesn't seem to be needed actually
                 }
             }
         }
@@ -71,15 +62,13 @@ minecraft {
         server {
             workingDirectory project.file('run')
             ideaModule "${rootProject.name}.${project.name}.main"
-            taskName 'Server-1.19'
+            taskName 'Server-' + minecraft_version_max_forge
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
-            // This one's important, why is the default config so bad?
-            property 'log4j.configurationFile', 'config\\log4j2.xml'
             mods {
                 modServerRun {
                     source sourceSets.main
-                    source project(":Common").sourceSets.main
+//                    source project(":Common").sourceSets.main //This doesn't seem to be needed actually
                 }
             }
         }
@@ -89,50 +78,45 @@ minecraft {
 //######################################################################################################################
 //                                                    Build Tasks
 //######################################################################################################################
-processResources {
-    outputs.upToDateWhen { false }
+tasks.register('shadowedJar', ForgeJarInJarTask) {
+    group('build')
+    from(sourceSets.main.output)
+    fromConfiguration(project.configurations.shadowed)
+    tasks.build.dependsOn(it)
+}
 
-    filesMatching("META-INF/mods.toml") {
-        expand([
-                "modid": (project.mod_name as String).replaceAll("-", "_").toLowerCase(),
-                "version": project.version,
-                "name": (project.mod_name as String).replaceAll("-", " "),
-                "description": project.mod_description,
-                "author": project.author,
-                "slug": (project.mod_name as String).toLowerCase(),
-                "sources": project.mod_name + "-1.18", //TODO Change the source repo one day
-                "license": project.license
-        ])
+jij.onConfiguration(project.configurations.shadowed) {
+    eachMatching('.+') {
+        versionRange libs.vlcj.get().versionConstraint.requiredVersion
+        filterContents {
+            exclude 'module-info.class'
+        }
+    }
+    eachMatching("de\\.nick1st\\.fancyvideo.*") {
+        // TODO Fix metadata (artifactID and obfuscation)
+        JiJDependencyData data = (JiJDependencyData) it
+        artifactId project.parent.name
+        setObfuscated(true)
     }
 }
 
-shadowJar {
-    archiveClassifier.set('')
-    archiveVersion.set(project.version)
-    configurations = [project.configurations.library]
-    finalizedBy 'reobfShadowJar'
-    exclude 'META-INF/maven/**'
-}
-
-assemble.dependsOn shadowJar
-
 reobf {
-    shadowJar {}
+    shadowedJar {}
 }
 
-
-jar.finalizedBy('reobfJar')
+//jar.finalizedBy('reobfJar')
+shadowedJar.finalizedBy('reobfShadowedJar')
 
 //######################################################################################################################
 //                                                      Publish
 //######################################################################################################################
-publishing {
+publishing { // TODO Fix this
     publications {
         mavenJava(MavenPublication) {
             groupId project.group
             artifactId project.archivesBaseName
             version project.version
-            artifact shadowJar
+            artifact jar
 
             pom {
                 name = "${(mod_name as String).replaceAll('-', ' ')}"
@@ -172,4 +156,4 @@ publishing {
     }
 }
 
-publish.dependsOn('reobfShadowJar')
+publish.dependsOn('reobfJar')

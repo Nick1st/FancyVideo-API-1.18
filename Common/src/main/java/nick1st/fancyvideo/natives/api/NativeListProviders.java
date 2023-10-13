@@ -7,15 +7,13 @@ import javax.annotation.Nullable;
  * @since 3.0.0
  */
 public interface NativeListProviders {
-    @Nullable
     NativeListEntry[] getModules();
 
-    @Nullable
-    NativeGroup[] getModuleGroups();
-
     /**
-     * If there are multiple lists matching for a task, the onw with a higher priority is picked first.
+     * If there are multiple lists matching for a task, the one with a higher priority is picked first.
      * @since 3.0.0
      */
-    short priority = 100;
+    default short priority() {
+        return 10;
+    }
 }

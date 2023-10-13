@@ -1,0 +1,27 @@
+subprojects {
+//######################################################################################################################
+//                                                Project Dependencies
+//######################################################################################################################
+    dependencies {
+        // Add FV-Common to all subprojects as a dependency, so that we can implement it
+        compileOnly project.rootProject.childProjects.get("Common")
+    }
+
+//######################################################################################################################
+//                                             Project Property Overwrite
+//######################################################################################################################
+    // Direct children only
+    if (project(':InternalPlugins') == project.parent) {
+        ext.setProperty('truename', project.rootProject.name + "-" + project.name)
+        ext.setProperty('credits', 'A huge THANKS to the team behind VLC, without their binaries this mod wouldn\'t be possible. libVLC\'s binaries are licensed by VideoLAN under the GNU General Public License Version 2, with sources available at https://code.videolan.org/videolan/vlc/ .')
+        ext.setProperty('mod_description', project.mod_description + ' This module contains the most important vlc binaries (files used for native C processing) and comes bundled with ' + rootProject.name.replaceAll('-', ' ') + '.')
+
+        // Group is required and must be unique, see https://github.com/gradle/gradle/issues/847
+        String realgroup = project.group + ".plugin." + project.name.replaceAll('-Plugin', '').toLowerCase()
+        project.group = realgroup
+        project.subprojects {
+            project.group = realgroup
+        }
+    }
+}
+

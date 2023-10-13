@@ -1,0 +1,21 @@
+//######################################################################################################################
+//                                              Build Plugin Declaration
+//######################################################################################################################
+plugins {
+    alias(libs.plugins.shadow)
+    alias(libs.plugins.forgeGradle)
+    alias(libs.plugins.forgeLiberian)
+}
+
+//######################################################################################################################
+//                                             Project Property Overwrite
+//######################################################################################################################
+
+jar {
+    archiveClassifier = ''
+}
+
+jar.finalizedBy('reobfJar')
+
+apply from: rootProject.file('gradle/forge.gradle')
+apply from: rootProject.file('gradle/jarmaker.gradle')

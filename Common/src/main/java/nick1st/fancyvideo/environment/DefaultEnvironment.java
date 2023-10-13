@@ -7,14 +7,14 @@ import nick1st.fancyvideo.Constants;
  * A change in the returned array is considered a breaking change.
  * @since 2.2.0.4
  */
-public class DefaultEnvironment implements IEnvironmentSetupService {
-    @Override
-    public String getModid() {
-        return Constants.MOD_ID;
-    }
-
-    @Override
-    public String[] getRequiredModules() {
-        return new String[0];
-    }
-}
+//public class DefaultEnvironment implements IEnvironmentSetupService {
+//    @Override
+//    public String getModid() {
+//        return Constants.MOD_ID;
+//    }
+//
+//    @Override
+//    public String[] getRequiredModules() {
+//        return new String[0];
+//    }
+//}

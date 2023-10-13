@@ -13,8 +13,14 @@ pluginManagement {
             name = 'Sponge Snapshots'
             url = 'https://repo.spongepowered.org/repository/maven-public/'
         }
+        maven {
+            name = 'Parchment Mappings'
+            url = 'https://maven.parchmentmc.org'
+        }
     }
 }
 
 rootProject.name = mod_name
 include("Common", "Fabric", "Forge")
+include("InternalPlugins:Core-Plugin:Common", "InternalPlugins:Core-Plugin:Forge")
+include("InternalPlugins:Core-Plugin")

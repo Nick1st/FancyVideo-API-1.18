@@ -25,6 +25,7 @@
 
 package nick1st.fancyvideo; //NOSONAR
 
+import net.minecraft.client.Minecraft;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -59,6 +60,7 @@ public class FancyVideoAPI {
             Constants.LOG.warn("## WARNING ## 'FancyVideo API' is a client mod and has no effect when loaded on a server!");
             return;
         }
+//        Minecraft.getInstance().player.connection.commands.equals("Test"); //TODO REMOVE
 
         // Init Config
         config = new FancyVideoConfig();

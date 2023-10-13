@@ -1,11 +1,52 @@
+//######################################################################################################################
+//                                               Project Main Properties
+//######################################################################################################################
+ext.setProperty('truename', rootProject.name)
+ext.setProperty('credits', 'Thanks to Caprica for VLCJ, without him this mod wouldn\'t be possible. VLCJ is licensed by Caprica under the GNU General Public License Version 3 or later, with sources available at https://github.com/caprica/vlcj .')
+ext.setProperty('mod_description', 'FancyVideo-API provides easy ways for mod developers to integrate videos into their mods in a resource friendly way.')
+
+
 subprojects {
+//######################################################################################################################
+//                                              Build Plugin Declaration
+//######################################################################################################################
     apply plugin: 'java'
     apply plugin: 'maven-publish'
-    
+    apply plugin: 'idea'
+
     java.toolchain.languageVersion = JavaLanguageVersion.of(17)
     java.withSourcesJar()
     java.withJavadocJar()
-        
+
+//######################################################################################################################
+//                                                Project Dependencies
+//######################################################################################################################
+    configurations {
+        shadowed // Everything added to this configuration will be shadowed/jijed into the jar
+        implementation.extendsFrom shadowed
+        nonMCLibrary // A lib that is not a mod. Needed to allow resolving it on Forge. Is transitive.
+    }
+
+    repositories {
+        mavenCentral()
+        maven {
+            name = 'Sponge / Mixin'
+            url = 'https://repo.spongepowered.org/repository/maven-public/'
+        }
+    }
+
+    dependencies {
+        shadowed(libs.vlcj) { // Fallback: Direct download from https://oss.sonatype.org/content/repositories/snapshots/uk/co/caprica/
+            exclude group: 'net.java.dev.jna'
+            //exclude group: 'net.java.dev.jna', module: 'jna'
+            //exclude group: 'net.java.dev.jna', module: 'jna-platform'
+        } // vlcJ
+        nonMCLibrary libs.vlcj // vlcJ
+    }
+
+//######################################################################################################################
+//                                               Artifact Specifications
+//######################################################################################################################
     jar {
         archiveClassifier.set('slim')
         archiveVersion.set(project.version)
@@ -24,27 +65,6 @@ subprojects {
             ])
         }
     }
-    
-    repositories {
-        mavenCentral()
-        maven {
-            name = 'Sponge / Mixin'
-            url = 'https://repo.spongepowered.org/repository/maven-public/'
-        }
-    }
-
-    configurations {
-        library
-        implementation.extendsFrom library
-    }
-
-    dependencies {
-        library("uk.co.caprica:vlcj:${vlcj_version}") { // Fallback: Direct download from https://oss.sonatype.org/content/repositories/snapshots/uk/co/caprica/
-            exclude group: 'net.java.dev.jna', module: 'jna'
-            exclude group: 'net.java.dev.jna', module: 'jna-platform'
-        } // vlcJ
-    }
-    
 
     tasks.withType(JavaCompile).configureEach {
         it.options.encoding = 'UTF-8'
@@ -62,4 +82,10 @@ subprojects {
 if (file('credentials.gradle').exists()) {
     apply from: 'credentials.gradle'
     println(mod_name)
+}
+
+tasks.prepareKotlinBuildScriptModel.finalizedBy {
+    allprojects {
+        logger.log(LogLevel.ERROR, project.group + " | " + project.name)
+    }
 }

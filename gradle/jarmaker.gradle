@@ -1,0 +1,13 @@
+//######################################################################################################################
+//                                               Artefact Specification
+//######################################################################################################################
+String filenamecore = rootProject.name
+if (rootProject.name != project.parent.name) {
+    filenamecore = filenamecore.replaceAll('[a-z]+', '') + '-' + project.parent.name
+}
+archivesBaseName = "${filenamecore}-${project.name}-${minecraft_version}"
+if (minecraft_version_max_forge != minecraft_version) {
+    Binding myBinding = new Binding()
+    myBinding.setProperty('project', project)
+    archivesBaseName = archivesBaseName + "-" + (String) new GroovyShell(myBinding).evaluate('project.properties.minecraft_version_max_' + project.name.toLowerCase())
+}

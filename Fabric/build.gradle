@@ -2,8 +2,8 @@
 //                                              Build Plugin Declaration
 //######################################################################################################################
 plugins {
-    id 'com.github.johnrengelman.shadow' version '7.1.2'
-    id 'fabric-loom' version '0.11-SNAPSHOT'
+    alias(libs.plugins.shadow)
+    alias(libs.plugins.fabricLoom)
     id 'idea'
 }
 
@@ -19,12 +19,21 @@ if (minecraft_version_min_fabric != minecraft_version) {
 //######################################################################################################################
 //                                                Project Dependencies
 //######################################################################################################################
+//configurations {
+//    shadowed
+//    implementation.extendsFrom shadowed
+//}
+
 dependencies {
     minecraft "com.mojang:minecraft:${minecraft_version}"
     mappings loom.officialMojangMappings()
     modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
     implementation project(":Common")
+
+//    shadowed("uk.co.caprica:vlcj:${vlcj_version}") { // Fallback: Direct download from https://oss.sonatype.org/content/repositories/snapshots/uk/co/caprica/
+//        exclude group: 'net.java.dev.jna'
+//    } // vlcJ
 }
 
 //######################################################################################################################
@@ -66,7 +75,7 @@ tasks.withType(JavaCompile) {
 //######################################################################################################################
 shadowJar {
     archiveClassifier.set('')
-    configurations = [project.configurations.library]
+    configurations = [project.configurations.shadowed]
     exclude 'META-INF/maven/**'
     finalizedBy 'remapJar'
 }
