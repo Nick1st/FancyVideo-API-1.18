@@ -1,0 +1,153 @@
+package nick1st.fancyvideo.api.player;
+
+import nick1st.fancyvideo.api.helpers.capabilities.DefaultCapabilities;
+import nick1st.fancyvideo.api.helpers.capabilities.RequiresCapability;
+import nick1st.fancyvideo.api.helpers.exceptions.*;
+
+import java.io.Closeable;
+
+/**
+ * This abstract base class provides a reasonable amount of methods <b>ALL</b> types of media players should support.
+ * Methods annotated with @{@link RequiresCapability} are optional, as some media types (and such their players) might
+ * not be able to support them.
+ *
+ * @since 3.0.0
+ */
+public abstract class MediaPlayer implements Closeable {
+
+    /**
+     * The current player state
+     * @apiNote It is up to the implementation to keep this field up to date.
+     * @since 3.0.0
+     */
+    public PlayerState state;
+
+    /**
+     * Starts playback if player is currently in state {@link PlayerState#READY} <br>
+     * When and <b>ONLY WHEN</b> calling this method with strict=false: <br>
+     * Resumes playback if player is currently in state {@link PlayerState#PAUSED} <br>
+     * Silently ignores if player is currently in state {@link PlayerState#PLAYING}
+     * <br><br>
+     * You probably don't want to override this method, see {@link #_play()} instead.
+     * @param strict If true, this won't resume a paused player, or silently accept that the player is already playing.
+     * @throws MethodUnsupportedPlayerStateException or a subclass depending on various conditions
+     */
+    public void play(boolean strict) {
+        switch (state) {
+            case UNINITIALIZED -> throw new PlayerUninitializedException(strict ?
+                    new String[]{PlayerState.READY.asString()} :
+                    new String[]{PlayerState.READY.asString(), PlayerState.PAUSED.asString()
+                            , PlayerState.PLAYING.asString()});
+            case INITIALIZED, STOPPED -> throw new PlayerNotReadyException(state.asString());
+            case PLAYING, PAUSED -> {
+                if (strict) {
+                    throw new MethodUnsupportedPlayerStateException(state.asString(),
+                            new String[]{PlayerState.READY.asString()});
+                }
+                if (state == PlayerState.PAUSED) {
+                    resume();
+                }
+            }
+            case READY -> _play();
+            case INVALID -> checkState(null);
+            case DISPOSED -> throw new PlayerDisposedException();
+        }
+    }
+
+    /**
+     * Starts playback if player is currently in state {@link PlayerState#READY} <br>
+     * Resumes playback if player is currently in state {@link PlayerState#PAUSED} <br>
+     * @apiNote This method is a shortcut for calling {@link #play(boolean)} with false.
+     * @since 3.0.0
+     */
+    public void play() {
+        play(false);
+    }
+
+    /**
+     * Internal method for starting playback. This is only initial start, <b>NOT</b> fired on resume.
+     * @see #play(boolean)
+     * @since 3.0.0
+     */
+    abstract void _play();
+
+    /**
+     * Pauses playback
+     * @since 3.0.0
+     * @throws MissingCapabilityException if the player does not have the capability required to invoke this method.
+     * @throws MethodUnsupportedPlayerStateException if the player was not in state {@link PlayerState#PLAYING}
+     */
+    @RequiresCapability(DefaultCapabilities.PAUSE)
+    public void pause() {
+        checkCapability(DefaultCapabilities.PAUSE);
+        checkState(PlayerState.PLAYING);
+    }
+
+    /**
+     * Resumes playback
+     * @since 3.0.0
+     * @throws MissingCapabilityException if the player does not have the capability required to invoke this method.
+     * @throws MethodUnsupportedPlayerStateException if the player was not in state {@link PlayerState#PLAYING}
+     */
+    @RequiresCapability(DefaultCapabilities.PAUSE)
+    public void resume(){
+        checkCapability(DefaultCapabilities.PAUSE);
+        checkState(PlayerState.PAUSED);
+    }
+
+    /**
+     * Stops playback.
+     * @since 3.0.0
+     */
+    public abstract void stop();
+
+    /**
+     * @param capability The capability this implementation might have / might not have
+     * @return true if the capability is there, false otherwise
+     * @apiNote The result of this method for a specific input can change during the players' lifetime, however
+     * <b>ONLY</b> from <b>false to true</b>.
+     * @since 3.0.0
+     */
+    public abstract boolean hasCapability(String capability);
+
+    /**
+     * Checks if this player has a capability
+     * @param capability The capability to check for
+     * @throws MissingCapabilityException if the capability is not present on this player
+     * @since 3.0.0
+     */
+    public final void checkCapability(String capability) {
+        if (!hasCapability(capability))
+            throw new MissingCapabilityException(capability);
+    }
+
+    /**
+     * Checks if this player is in a specific state
+     * @param state The state to check if the player is in
+     * @throws MethodUnsupportedPlayerStateException if the state of the player is not the state checked for
+     * @since 3.0.0
+     */
+    public final void checkState(PlayerState state) {
+        if (this.state == PlayerState.INVALID) {
+            onInvalid();
+        }
+        if (this.state != state)
+            throw new MethodUnsupportedPlayerStateException(this.state.asString(), new String[]{state.asString()});
+    }
+
+    /**
+     * Called if player is in an invalid, non-recoverable state. <br>
+     * @apiNote Implementations should override this method.
+     * @since 3.0.0
+     */
+    public void onInvalid() {
+        close();
+    }
+
+    /**
+     * Releases all resources held by this player.
+     * @since 3.0.0
+     */
+    @Override
+    public abstract void close();
+}

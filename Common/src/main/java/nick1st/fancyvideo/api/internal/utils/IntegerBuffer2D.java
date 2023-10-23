@@ -25,14 +25,25 @@
 
 package nick1st.fancyvideo.api.internal.utils; //NOSONAR
 
+import java.nio.IntBuffer;
 import java.util.Arrays;
 
 @SuppressWarnings("unused")
 public class IntegerBuffer2D {
-    int[][] matrix;
+    int[][] matrix; // Height, Width
 
-    public IntegerBuffer2D(int sizeOfBanks, int banks) {
+    public IntegerBuffer2D(int sizeOfBanks, int banks) { // Width, Height
         matrix = new int[banks][sizeOfBanks];
+    }
+
+    public IntegerBuffer2D(int width, IntBuffer intBuffer) {
+        this(width, intBuffer.capacity() / width);
+        int height = intBuffer.capacity() / width;
+        for (int i = 0; i < height; i++) {
+            int[] bank = new int[width];
+            intBuffer.get(i * width, bank, 0, width);
+            matrix[i] = bank;
+        }
     }
 
     @SuppressWarnings("This does copy matrix, but using low-level code")

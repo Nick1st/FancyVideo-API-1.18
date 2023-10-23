@@ -45,6 +45,7 @@ public class FancyVideoConfig extends SimpleConfig {
             }
             return false;
         });
+        setProperty("debug", String.valueOf(false), "Enables debug logging to logs/FV-API/ . Requires a restart. Please zip up this folder and attach it to your report.", "true / false", s -> Arrays.asList("true", "false").contains(s));
         if (Services.PLATFORM.getPlatformName().equals("Forge")) {
             setProperty("debugLog", String.valueOf(false), "Enable debug logging. Disables the ModLauncher log filter. This cause massive log spam! Only activate this when you're told to!", "true / false", s -> Arrays.asList("true", "false").contains(s));
         }

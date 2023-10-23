@@ -42,6 +42,10 @@ subprojects {
             //exclude group: 'net.java.dev.jna', module: 'jna-platform'
         } // vlcJ
         nonMCLibrary libs.vlcj // vlcJ
+        shadowed(libs.gst) {
+            exclude group: 'net.java.dev.jna'
+        }
+        nonMCLibrary libs.gst
     }
 
 //######################################################################################################################

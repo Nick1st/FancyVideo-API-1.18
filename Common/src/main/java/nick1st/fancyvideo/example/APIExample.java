@@ -37,6 +37,7 @@ import nick1st.fancyvideo.api.eventbus.EventPhase;
 import nick1st.fancyvideo.api.eventbus.FancyVideoEvent;
 import nick1st.fancyvideo.api.eventbus.event.PlayerEvents;
 import nick1st.fancyvideo.api.eventbus.event.PlayerRegistryEvent;
+import nick1st.fancyvideo.api.mediaPlayer.GstPlayer;
 import nick1st.fancyvideo.api.mediaPlayer.MediaPlayerBase;
 import nick1st.fancyvideo.api.mediaPlayer.SimpleMediaPlayer;
 
@@ -49,13 +50,15 @@ public class APIExample {
     public void init(PlayerRegistryEvent.AddPlayerEvent event) {
         Constants.LOG.info("Setting up example media player");
         resourceLocation = new DynamicResourceLocation(Constants.MOD_ID, "example");
-        event.handler().registerPlayerOnFreeResLoc(resourceLocation, SimpleMediaPlayer.class);
-        if (event.handler().getMediaPlayer(resourceLocation).providesAPI()) {
-            event.handler().getMediaPlayer(resourceLocation).api().media().prepare("https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4");
-            event.handler().getMediaPlayer(resourceLocation).api().audio().setVolume(200);
-        } else {
-            Constants.LOG.warn("Example running in NO_LIBRARY_MODE");
-        }
+        event.handler().registerPlayerOnFreeResLoc(resourceLocation, GstPlayer.class);
+
+//        event.handler().registerPlayerOnFreeResLoc(resourceLocation, SimpleMediaPlayer.class);
+//        if (event.handler().getMediaPlayer(resourceLocation).providesAPI()) {
+//            event.handler().getMediaPlayer(resourceLocation).api().media().prepare("https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4");
+//            event.handler().getMediaPlayer(resourceLocation).api().audio().setVolume(200);
+//        } else {
+//            Constants.LOG.warn("Example running in NO_LIBRARY_MODE");
+//        }
     }
 
     @FancyVideoEvent(player = Constants.MOD_ID + ":" + "example")
@@ -63,7 +66,7 @@ public class APIExample {
     public void onFinished(PlayerEvents.PlayerFinishedEvent event) {
         Constants.LOG.info("Finished Event Fired");
         if (event.getMediaPlayer().providesAPI()) {
-            event.getMediaPlayer().api().media().play("https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4");
+//            event.getMediaPlayer().api().media().play("https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4");
         }
     }
 
@@ -74,7 +77,7 @@ public class APIExample {
         MediaPlayerHandler.getInstance().getMediaPlayer(resourceLocation) instanceof MediaPlayerBase mediaPlayer) {
             if (MediaPlayerHandler.getInstance().getMediaPlayer(resourceLocation).providesAPI()) {
                 if (!init) {
-                    mediaPlayer.api().controls().play();
+//                    mediaPlayer.api().controls().play();
                     init = true;
                 }
                 // Generic Render Code for Screens
