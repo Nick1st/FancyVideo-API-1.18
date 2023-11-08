@@ -1,0 +1,37 @@
+//######################################################################################################################
+//                                              Build Plugin Declaration
+//######################################################################################################################
+plugins {
+    alias(libs.plugins.vanillaGradle)
+}
+
+//######################################################################################################################
+//                                               Artefact Specification
+//######################################################################################################################
+if (minecraft_version_min != minecraft_version) {
+    archivesBaseName = "${mod_name}-dev-${minecraft_version_min}-${minecraft_version}"
+} else {
+    archivesBaseName = "${mod_name}-dev-${minecraft_version}"
+}
+
+//######################################################################################################################
+//                                                Project Dependencies
+//######################################################################################################################
+minecraft {
+    version(minecraft_version)
+}
+
+dependencies {
+    compileOnly(libs.mixin)
+    shadowed(libs.gst) {
+        exclude group: 'net.java.dev.jna'
+    }
+    nonMCLibrary libs.gst
+}
+
+processResources {
+    def buildProps = project.properties.clone()
+    filesMatching(['pack.mcmeta']) {
+        expand buildProps
+    }
+}

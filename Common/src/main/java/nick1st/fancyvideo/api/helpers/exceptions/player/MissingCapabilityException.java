@@ -1,4 +1,4 @@
-package nick1st.fancyvideo.api.helpers.exceptions;
+package nick1st.fancyvideo.api.helpers.exceptions.player;
 
 /**
  * This exception is thrown when a player is missing a capability required for the called method.

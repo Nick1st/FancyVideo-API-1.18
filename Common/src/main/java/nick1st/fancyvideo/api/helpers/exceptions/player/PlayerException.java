@@ -1,4 +1,4 @@
-package nick1st.fancyvideo.api.helpers.exceptions;
+package nick1st.fancyvideo.api.helpers.exceptions.player;
 
 /**
  * Base class of Exceptions thrown during the lifetime of a media player.

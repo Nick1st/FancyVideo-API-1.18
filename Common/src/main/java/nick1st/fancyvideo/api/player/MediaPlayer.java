@@ -2,7 +2,7 @@ package nick1st.fancyvideo.api.player;
 
 import nick1st.fancyvideo.api.helpers.capabilities.DefaultCapabilities;
 import nick1st.fancyvideo.api.helpers.capabilities.RequiresCapability;
-import nick1st.fancyvideo.api.helpers.exceptions.*;
+import nick1st.fancyvideo.api.helpers.exceptions.player.*;
 
 import java.io.Closeable;
 
@@ -69,7 +69,7 @@ public abstract class MediaPlayer implements Closeable {
      * @see #play(boolean)
      * @since 3.0.0
      */
-    abstract void _play();
+    protected abstract void _play();
 
     /**
      * Pauses playback

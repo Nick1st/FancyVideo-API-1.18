@@ -3,8 +3,8 @@ package nick1st.fancyvideo.api.player;
 import nick1st.fancyvideo.api.helpers.capabilities.DefaultCapabilities;
 import nick1st.fancyvideo.api.helpers.capabilities.OptionalCapability;
 import nick1st.fancyvideo.api.helpers.capabilities.RequiresCapability;
-import nick1st.fancyvideo.api.helpers.exceptions.MethodUnsupportedPlayerStateException;
-import nick1st.fancyvideo.api.helpers.exceptions.MissingCapabilityException;
+import nick1st.fancyvideo.api.helpers.exceptions.player.MethodUnsupportedPlayerStateException;
+import nick1st.fancyvideo.api.helpers.exceptions.player.MissingCapabilityException;
 
 /**
  * This interface provides typical method existing on a player supporting audio.
@@ -66,7 +66,8 @@ public interface PlayerSupportsAudio {
      * Requires the {@link DefaultCapabilities#MONO_CONVERT} capability to be present on the player.
      * @since 3.0.0
      * @apiNote Implementations need to do the capability check themselves.
-     * @throws MissingCapabilityException if the player does
+     * @throws MissingCapabilityException if the player does not have the {@link DefaultCapabilities#MONO_CONVERT}
+     * capability.
      */
     @RequiresCapability(DefaultCapabilities.MONO_CONVERT)
     void convertToMono();

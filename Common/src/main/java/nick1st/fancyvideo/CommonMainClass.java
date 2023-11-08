@@ -30,11 +30,14 @@ import nick1st.fancyvideo.api.MediaPlayerHandler;
 import nick1st.fancyvideo.api.eventbus.EventException;
 import nick1st.fancyvideo.api.eventbus.FancyVideoEventBus;
 import nick1st.fancyvideo.api.eventbus.event.PlayerRegistryEvent;
+import nick1st.fancyvideo.api.plugins.Plugin;
+import nick1st.fancyvideo.api.plugins.PluginRegistry;
 import nick1st.fancyvideo.config.SimpleConfig;
 import nick1st.fancyvideo.example.APIExample;
 import nick1st.fancyvideo.internal.Arch;
 import nick1st.fancyvideo.internal.DLLHandler;
 import nick1st.fancyvideo.internal.LibraryMapping;
+import nick1st.fancyvideo.api.plugins.PluginLocator;
 import nick1st.fancyvideo.natives.api.NativeHelper;
 import org.apache.commons.lang3.SystemUtils;
 import uk.co.caprica.vlcj.binding.support.runtime.RuntimeUtil;
@@ -47,6 +50,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
+import java.util.ServiceLoader;
 
 import static uk.co.caprica.vlcj.binding.lib.LibVlc.libvlc_get_version;
 
@@ -54,6 +58,10 @@ public class CommonMainClass {
     private final NativeDiscovery discovery = new NativeDiscovery();
 
     public CommonMainClass(SimpleConfig config) {
+        // Block of new 3.0.0
+        loadPlugins();
+        // End of block of new 3.0.0
+
         // Detect OS
         if (SystemUtils.IS_OS_LINUX) {
             Constants.OS = "linux";
@@ -174,5 +182,16 @@ public class CommonMainClass {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Loads all Plugins (implementations of {@link PluginLocator}) and registers them
+     */
+    private void loadPlugins() {
+        ServiceLoader<PluginLocator> loader = ServiceLoader.load(PluginLocator.class);
+        for (PluginLocator plugin : loader) {
+            PluginRegistry.get().register(plugin.identifier(), new Plugin(plugin.getProvidedPlayers()));
+        }
+        PluginRegistry.get().freeze();
     }
 }

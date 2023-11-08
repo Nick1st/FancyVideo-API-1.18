@@ -1,4 +1,4 @@
-package nick1st.fancyvideo.api.helpers.exceptions;
+package nick1st.fancyvideo.api.helpers.exceptions.player;
 
 /**
  * This exception is thrown when you call a method on a player, but the method is invalid in the context of the current

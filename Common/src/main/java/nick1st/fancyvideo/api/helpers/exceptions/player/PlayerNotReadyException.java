@@ -1,4 +1,4 @@
-package nick1st.fancyvideo.api.helpers.exceptions;
+package nick1st.fancyvideo.api.helpers.exceptions.player;
 
 import nick1st.fancyvideo.api.player.PlayerState;
 
