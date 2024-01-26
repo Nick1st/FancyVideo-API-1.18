@@ -36,12 +36,6 @@ subprojects {
     }
 
     dependencies {
-        shadowed(libs.vlcj) { // Fallback: Direct download from https://oss.sonatype.org/content/repositories/snapshots/uk/co/caprica/
-            exclude group: 'net.java.dev.jna'
-            //exclude group: 'net.java.dev.jna', module: 'jna'
-            //exclude group: 'net.java.dev.jna', module: 'jna-platform'
-        } // vlcJ
-        nonMCLibrary libs.vlcj // vlcJ
         shadowed(libs.gst) {
             exclude group: 'net.java.dev.jna'
         }

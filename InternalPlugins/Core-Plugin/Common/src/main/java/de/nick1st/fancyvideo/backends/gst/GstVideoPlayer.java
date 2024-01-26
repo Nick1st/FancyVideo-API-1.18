@@ -6,7 +6,6 @@ import nick1st.fancyvideo.api.helpers.exceptions.player.MethodUnsupportedPlayerS
 import nick1st.fancyvideo.api.helpers.exceptions.player.MissingCapabilityException;
 import nick1st.fancyvideo.api.helpers.formats.ByteBufferVideoFormat;
 import nick1st.fancyvideo.api.helpers.formats.VideoFormatNew;
-import nick1st.fancyvideo.api.internal.utils.IntegerBuffer2D;
 import nick1st.fancyvideo.api.player.MediaPlayer;
 import nick1st.fancyvideo.api.player.PlayerFactoryHelper;
 import nick1st.fancyvideo.api.player.PlayerState;
@@ -16,7 +15,6 @@ import org.freedesktop.gstreamer.elements.AppSink;
 import org.freedesktop.gstreamer.elements.PlayBin;
 
 import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 

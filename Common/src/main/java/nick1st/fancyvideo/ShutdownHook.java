@@ -26,16 +26,13 @@
 package nick1st.fancyvideo; //NOSONAR
 
 
-import nick1st.fancyvideo.api.MediaPlayerHandler;
-
 public class ShutdownHook extends Thread {
 
-    private final MediaPlayerHandler instance = MediaPlayerHandler.getInstance();
 
     @Override
     public void run() {
         Constants.LOG.info("Running FancyVideo-API shutdown hook");
-        instance.shutdown();
+        // TODO
         Constants.LOG.info("Shutdown hook finished");
     }
 

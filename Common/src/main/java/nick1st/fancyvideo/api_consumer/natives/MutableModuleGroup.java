@@ -1,6 +1,5 @@
 package nick1st.fancyvideo.api_consumer.natives;
 
-import com.google.common.graph.MutableValueGraph;
 import net.minecraft.resources.ResourceLocation;
 import nick1st.fancyvideo.Constants;
 

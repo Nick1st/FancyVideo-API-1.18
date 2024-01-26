@@ -1,7 +1,6 @@
 package nick1st.fancyvideo.api.plugins;
 
 import net.minecraft.resources.ResourceLocation;
-import nick1st.fancyvideo.api.eventbus.event.EnvironmentSetupEvent;
 import nick1st.fancyvideo.api.player.MediaPlayer;
 
 /**
@@ -16,13 +15,6 @@ public interface PluginLocator {
      * @since 3.0.0
      */
     ResourceLocation identifier();
-
-    /**
-     * This gets automatically called for any plugin that was located. Register your events here.
-     * @param obj the obj to register at. // TODO Update javadoc
-     * @since 3.0.0
-     */
-    void registerEvents(EnvironmentSetupEvent obj); // TODO Change the event to something more useful
 
     /**
      * This gets automatically called.
