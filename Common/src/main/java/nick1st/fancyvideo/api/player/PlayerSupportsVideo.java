@@ -1,6 +1,7 @@
 package nick1st.fancyvideo.api.player;
 
-import nick1st.fancyvideo.api.helpers.formats.MediaFormat;
+import nick1st.fancyvideo.api.helpers.annotations.CalledByQuery;
+import nick1st.fancyvideo.api.helpers.formats.VideoFormatNew;
 
 /**
  * This interface provides typical method existing on a player supporting video.
@@ -9,10 +10,12 @@ import nick1st.fancyvideo.api.helpers.formats.MediaFormat;
 public interface PlayerSupportsVideo {
 
     /**
-     * @return an array of sink {@link MediaFormat}s (the output types) supported by this player.
+     * @param videoFormat the video format requested
+     * @return true of the player can provide this format, false otherwise
      * @since 3.0.0
      */
-    MediaFormat[] getSupportedVideoSinkFormats();
+    @CalledByQuery
+    boolean supportsVideoSinkFormat(VideoFormatNew<?> videoFormat);
 
     /**
      * Sets the format the player should sink as. Should be called in {@link PlayerState#INITIALIZED}
@@ -20,5 +23,5 @@ public interface PlayerSupportsVideo {
      * @apiNote Remember that the format set here is a <b>BINDING</b> contract
      * @since 3.0.0
      */
-    void setVideoSinkFormat(MediaFormat sinkFormat);
+    void setVideoSinkFormat(VideoFormatNew<?> sinkFormat);
 }

@@ -1,13 +1,16 @@
 package nick1st.fancyvideo.api.plugins;
 
 import net.minecraft.resources.ResourceLocation;
+import nick1st.fancyvideo.Constants;
 import nick1st.fancyvideo.api.helpers.exceptions.plugin.IdentifierAlreadyKnownException;
 import nick1st.fancyvideo.api.helpers.exceptions.plugin.PluginRegistryAlreadyFrozenException;
+import nick1st.fancyvideo.api.player.MediaPlayer;
 import nick1st.fancyvideo.api.player.PlayerFactoryHelper;
+import nick1st.fancyvideo.api.player.querys.Query;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Function;
+import javax.annotation.CheckForNull;
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
 
 /**
  * This class provides static access to all registered plugins. Use {@link #get()} to get the PluginRegistry.
@@ -55,7 +58,8 @@ public final class PluginRegistry {
     }
 
     /**
-     * Freezes the registry. You should not modify the registry after it has been frozen.
+     * Freezes the registry. You should not modify the registry after it has been frozen. You should not access the
+     * registry before it is frozen.
      * @since 3.0.0
      */
     public void freeze() {
@@ -63,15 +67,32 @@ public final class PluginRegistry {
     }
 
     /**
-     *
-     * @param query
-     * @return
+     * Searches through the registry of registered players
+     * @param query the query used for the search
+     * @return a suitable MediaPlayer implementation, or null if none was found
      * @since 3.0.0
      */
-    public PlayerFactoryHelper getPlayerForQuery(Function<ResourceLocation, PlayerFactoryHelper> query) {
+    @CheckForNull
+    public PlayerFactoryHelper getPlayerForQuery(Query query) {
         if (!frozen) throw new RuntimeException("No players are available yet"); // TODO custom Exception
-        // TODO javadoc
-        // TODO implementation
-        return new PlayerFactoryHelper(resourceLocationPluginMap.values().stream().findFirst().get().playersProvided[0], new ResourceLocation("test", "test"));
+
+        List<PlayerFactoryHelper> compatiblePlayerFactoryHelpers = new ArrayList<>();
+        resourceLocationPluginMap.values().forEach(plugin -> Arrays.stream(plugin.playersProvided).forEach(playerClass -> {
+            PlayerFactoryHelper factoryHelper = new PlayerFactoryHelper(playerClass);
+            try (MediaPlayer testPlayer = playerClass.getConstructor(PlayerFactoryHelper.class, boolean.class)
+                    .newInstance(factoryHelper, true)) {
+                if (query.test(testPlayer)) compatiblePlayerFactoryHelpers.add(factoryHelper);
+            } catch (NoSuchMethodException | InvocationTargetException | InstantiationException |
+                     IllegalAccessException e) {
+                Constants.LOG.error("MediaPlayer implementation {} of plugin {} is missing default ctor.", playerClass.getName(), plugin.getClass().getName());
+                Constants.LOG.error("Exception: ", e);
+            } catch (Exception e) {
+                Constants.LOG.error("An error occurred during evaluation of query: ", e);
+            }
+        }));
+        compatiblePlayerFactoryHelpers.forEach(helper ->
+                Constants.LOG.debug("Found a compatible player implementation for a query: {}",
+                        helper.getClassToInstantiate().getName()));
+        return !compatiblePlayerFactoryHelpers.isEmpty() ? compatiblePlayerFactoryHelpers.get(0) : null;
     }
 }

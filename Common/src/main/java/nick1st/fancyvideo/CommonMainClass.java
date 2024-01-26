@@ -34,6 +34,7 @@ import nick1st.fancyvideo.api.plugins.Plugin;
 import nick1st.fancyvideo.api.plugins.PluginRegistry;
 import nick1st.fancyvideo.config.SimpleConfig;
 import nick1st.fancyvideo.example.APIExample;
+import nick1st.fancyvideo.example.NewExample;
 import nick1st.fancyvideo.internal.Arch;
 import nick1st.fancyvideo.internal.DLLHandler;
 import nick1st.fancyvideo.internal.LibraryMapping;
@@ -105,7 +106,9 @@ public class CommonMainClass {
         if (config.getAsBool("example")) {
             try {
                 APIExample example = new APIExample();
+                NewExample newExample = new NewExample();
                 FancyVideoEventBus.getInstance().registerEvent(example);
+                FancyVideoEventBus.getInstance().registerEvent(newExample);
             } catch (EventException e) {
                 Constants.LOG.error("A critical error happened", e);
             }

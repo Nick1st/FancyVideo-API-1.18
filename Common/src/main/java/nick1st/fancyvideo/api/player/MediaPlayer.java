@@ -1,5 +1,7 @@
 package nick1st.fancyvideo.api.player;
 
+import nick1st.fancyvideo.api.helpers.MediaSource;
+import nick1st.fancyvideo.api.helpers.annotations.CalledByQuery;
 import nick1st.fancyvideo.api.helpers.capabilities.DefaultCapabilities;
 import nick1st.fancyvideo.api.helpers.capabilities.RequiresCapability;
 import nick1st.fancyvideo.api.helpers.exceptions.player.*;
@@ -20,7 +22,38 @@ public abstract class MediaPlayer implements Closeable {
      * @apiNote It is up to the implementation to keep this field up to date.
      * @since 3.0.0
      */
-    public PlayerState state;
+    protected PlayerState state = PlayerState.UNINITIALIZED;
+
+    /**
+     * Metadata field used for creation and query of this player
+     * @since 3.0.0
+     */
+    protected PlayerFactoryHelper factoryHelper;
+
+    /**
+     * This ctor is used during a MediaPlayer search query. If that is the case (param bool isQuery is true),
+     * it should <b>NEVER</b> allocate or create native resources,
+     * unless that is needed to check if this player instance can function at all. {@link #close()} is always called at
+     * the end of the query.
+     * @param factoryHelper a metadata object used to create this player
+     * @param isQuery if this invocation is caused by a query
+     * @apiNote <b>THIS CTOR MUST BE IMPLEMENTED!</b>
+     * @since 3.0.0
+     */
+    @CalledByQuery
+    public MediaPlayer(PlayerFactoryHelper factoryHelper, boolean isQuery) {
+        if (isQuery) {
+            this.factoryHelper = factoryHelper;
+        }
+    }
+
+    /**
+     * Sets the media source this player should play from.
+     * @param source the mediaSource this player should play from
+     * @since 3.0.0
+     */
+    @CalledByQuery
+    public abstract void setMediaSource(MediaSource source);
 
     /**
      * Starts playback if player is currently in state {@link PlayerState#READY} <br>
@@ -33,18 +66,18 @@ public abstract class MediaPlayer implements Closeable {
      * @throws MethodUnsupportedPlayerStateException or a subclass depending on various conditions
      */
     public void play(boolean strict) {
-        switch (state) {
+        switch (getState()) {
             case UNINITIALIZED -> throw new PlayerUninitializedException(strict ?
                     new String[]{PlayerState.READY.asString()} :
                     new String[]{PlayerState.READY.asString(), PlayerState.PAUSED.asString()
                             , PlayerState.PLAYING.asString()});
-            case INITIALIZED, STOPPED -> throw new PlayerNotReadyException(state.asString());
+            case INITIALIZED, STOPPED -> throw new PlayerNotReadyException(getState().asString());
             case PLAYING, PAUSED -> {
                 if (strict) {
-                    throw new MethodUnsupportedPlayerStateException(state.asString(),
+                    throw new MethodUnsupportedPlayerStateException(getState().asString(),
                             new String[]{PlayerState.READY.asString()});
                 }
-                if (state == PlayerState.PAUSED) {
+                if (getState() == PlayerState.PAUSED) {
                     resume();
                 }
             }
@@ -87,7 +120,7 @@ public abstract class MediaPlayer implements Closeable {
      * Resumes playback
      * @since 3.0.0
      * @throws MissingCapabilityException if the player does not have the capability required to invoke this method.
-     * @throws MethodUnsupportedPlayerStateException if the player was not in state {@link PlayerState#PLAYING}
+     * @throws MethodUnsupportedPlayerStateException if the player was not in state {@link PlayerState#PAUSED}
      */
     @RequiresCapability(DefaultCapabilities.PAUSE)
     public void resume(){
@@ -108,6 +141,7 @@ public abstract class MediaPlayer implements Closeable {
      * <b>ONLY</b> from <b>false to true</b>.
      * @since 3.0.0
      */
+    @CalledByQuery
     public abstract boolean hasCapability(String capability);
 
     /**
@@ -128,11 +162,12 @@ public abstract class MediaPlayer implements Closeable {
      * @since 3.0.0
      */
     public final void checkState(PlayerState state) {
-        if (this.state == PlayerState.INVALID) {
+        if (state == null || this.getState() == PlayerState.INVALID) {
             onInvalid();
+            throw new MethodUnsupportedPlayerStateException(PlayerState.INVALID.asString(), new String[]{});
         }
-        if (this.state != state)
-            throw new MethodUnsupportedPlayerStateException(this.state.asString(), new String[]{state.asString()});
+        if (this.getState() != state)
+            throw new MethodUnsupportedPlayerStateException(this.getState().asString(), new String[]{state.asString()});
     }
 
     /**
@@ -146,8 +181,19 @@ public abstract class MediaPlayer implements Closeable {
 
     /**
      * Releases all resources held by this player.
+     * Use {@link #factoryHelper} to check if this was only called because of a query ending, and act accordingly.
      * @since 3.0.0
      */
+    @CalledByQuery
     @Override
     public abstract void close();
+
+    /**
+     * The current player state
+     * @apiNote It is up to the implementation to keep this field up to date.
+     * @since 3.0.0
+     */
+    public PlayerState getState() {
+        return state;
+    }
 }

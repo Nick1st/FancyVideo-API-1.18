@@ -1,9 +1,12 @@
 package nick1st.fancyvideo.api.player;
 
 import net.minecraft.resources.ResourceLocation;
-import nick1st.fancyvideo.Constants;
 import nick1st.fancyvideo.api.helpers.DebugLevel;
+import nick1st.fancyvideo.api.helpers.capabilities.DefaultCapabilities;
+import nick1st.fancyvideo.api.player.querys.LogicQueries;
+import nick1st.fancyvideo.api.player.querys.MediaPlayerQueries;
 
+import javax.annotation.CheckForNull;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,20 +26,17 @@ public class PlayerFactoryHelper {
 
     private Class<MediaPlayer> classToInstantiate;
 
+    @CheckForNull
     private ResourceLocation playerResourceLocation;
 
     private DebugLevel debugLevel = DebugLevel.COMPLEX_DEBUG; // TODO get this from the main config
 
     /**
-     * @param classToInstantiate the class of player that should be created
-     * @param playerResourceLocation the resource location uniquely identifying this player, once/if it is instantiated.
-     *                               Even if the player gets disposed later, you can <b>NOT</b> reuse this!
+     * @param classToInstantiate the class of the player that should be created
      * @since 3.0.0
      */
-    public PlayerFactoryHelper(Class<MediaPlayer> classToInstantiate, ResourceLocation playerResourceLocation) {
+    public PlayerFactoryHelper(Class<MediaPlayer> classToInstantiate) {
         this.classToInstantiate = classToInstantiate;
-        this.playerResourceLocation = playerResourceLocation;
-        // TODO check resource location npt already created
     }
 
     /**
@@ -65,14 +65,19 @@ public class PlayerFactoryHelper {
 
     /**
      * Instantiates a MediaPlayer specified by this PlayerFactoryHelper and claims the ResourceLocation specified.
+     * @param playerResourceLocation the resource location uniquely identifying this player, once/if it is instantiated.
+     *                               Even if the player gets disposed later, you can <b>NOT</b> reuse this!
      * @return a mediaPlayer
      * @since 3.0.0
      */
-    public MediaPlayer create() {
+    public MediaPlayer create(ResourceLocation playerResourceLocation) {
         // TODO register ResourceLocation to a registry
         // TODO also register the player, so that we certainly can clear it up
+        // TODO check resource location not already created
         try {
-            return classToInstantiate.getDeclaredConstructor(this.getClass()).newInstance(this);
+            this.playerResourceLocation = playerResourceLocation;
+            MediaPlayer mediaPlayer = classToInstantiate.getDeclaredConstructor(this.getClass(), Boolean.class).newInstance(this, false);
+            return mediaPlayer;
         } catch (Exception e) {
             // TODO Exceptions etc
             return null;
