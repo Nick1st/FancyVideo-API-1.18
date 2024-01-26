@@ -25,14 +25,25 @@
 
 package nick1st.fancyvideo; //NOSONAR
 
+import nick1st.fancyvideo.api.eventbus.EventException;
+import nick1st.fancyvideo.api.eventbus.FancyVideoEventBus;
+import nick1st.fancyvideo.api.plugins.Plugin;
+import nick1st.fancyvideo.api.plugins.PluginLocator;
+import nick1st.fancyvideo.api.plugins.PluginRegistry;
 import nick1st.fancyvideo.config.SimpleConfig;
+import nick1st.fancyvideo.example.NewExample;
 import nick1st.fancyvideo.internal.Arch;
 import nick1st.fancyvideo.internal.DLLHandler;
 import org.apache.commons.lang3.SystemUtils;
 
+import java.util.ServiceLoader;
+
 public class CommonMainClass {
 
     public CommonMainClass(SimpleConfig config) {
+        // Block of new 3.0.0
+        loadPlugins();
+        // End of block of new 3.0.0
 
         // Detect OS
         if (SystemUtils.IS_OS_LINUX) {
@@ -62,7 +73,24 @@ public class CommonMainClass {
         // Setup Example?
         if (config.getAsBool("example")) {
             // TODO
+            try {
+                FancyVideoEventBus.getInstance().registerEvent(new NewExample());
+            } catch (EventException.EventRegistryException e) {
+                throw new RuntimeException(e);
+            } catch (EventException.UnauthorizedRegistryException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
+    /**
+     * Loads all Plugins (implementations of {@link PluginLocator}) and registers them
+     */
+    private void loadPlugins() {
+        ServiceLoader<PluginLocator> loader = ServiceLoader.load(PluginLocator.class);
+        for (PluginLocator plugin : loader) {
+            PluginRegistry.get().register(plugin.identifier(), new Plugin(plugin.getProvidedPlayers()));
+        }
+        PluginRegistry.get().freeze();
+    }
 }

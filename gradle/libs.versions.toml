@@ -1,6 +1,6 @@
 [libraries]
 mixin = { group = 'org.spongepowered', name = 'mixin', version = '0.8.5' }
-forge = { group = 'net.minecraftforge', name = 'forge', version = '1.19.2-43.2.3'}
+forge = { group = 'net.minecraftforge', name = 'forge', version = '1.19.2-43.3.0'}
 vlcj = { group = 'uk.co.caprica', name = 'vlcj', version = '[5.0.0-SNAPSHOT]'}
 gst = { group = 'org.freedesktop.gstreamer', name = 'gst1-java-core', version = '1.4.0'}
 
