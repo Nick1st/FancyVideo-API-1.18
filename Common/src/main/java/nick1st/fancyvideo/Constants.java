@@ -32,7 +32,6 @@ import org.slf4j.LoggerFactory;
 public record Constants() {
     //DLL Version
     public static final int DLL_VERSION = 3;
-    public static final String PLUGINSDIR = "plugins/";
 
     // Mod info
     public static final String MOD_ID = "fancyvideo_api";
@@ -45,11 +44,6 @@ public record Constants() {
 
     // First render Tick
     public static boolean renderTick;
-
-    // String constants
-    public static final String AUDIO_OUTPUT = "audio_output";
-    public static final String VIDEO_FILTER = "video_filter";
-    public static final String ACCESS = "access";
 
     // No_Library_Mode
     public static boolean NO_LIBRARY_MODE = true;

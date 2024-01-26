@@ -33,7 +33,6 @@ import nick1st.fancyvideo.api.plugins.PluginRegistry;
 import nick1st.fancyvideo.config.SimpleConfig;
 import nick1st.fancyvideo.example.NewExample;
 import nick1st.fancyvideo.internal.Arch;
-import nick1st.fancyvideo.internal.DLLHandler;
 import org.apache.commons.lang3.SystemUtils;
 
 import java.util.ServiceLoader;
@@ -59,14 +58,6 @@ public class CommonMainClass {
         Constants.ARCH = Arch.getArch().toString();
 
         Constants.LOG.info("Running on OS: {} {}", Constants.OS, Constants.ARCH);
-
-        // Delete mismatched dlls
-        if (config.getAsInt("dllVersion") != Constants.DLL_VERSION || Constants.DEBUG_NO_LIBRARY_MODE) {
-            Constants.LOG.info("DLL Version did change, removing old files...");
-            DLLHandler.clearDLL();
-            config.properties.setProperty("dllVersion", String.valueOf(Constants.DLL_VERSION));
-            config.write();
-        }
 
         Runtime.getRuntime().addShutdownHook(new ShutdownHook());
 
