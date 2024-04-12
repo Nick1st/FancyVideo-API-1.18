@@ -1,25 +1,21 @@
-# MultiLoader Template
+# FancyVideo-API - Notice of Discontinuance
+As of today, Friday, Feburary the 12th 2024 **FancyVideo-API is officially discontinued immediately**. I'm deeply sorry for all inconveniences this causes.
 
-This project provides a Gradle project template that can compile mods for both Forge and Fabric using a common sourceset. This project does not require any third party libraries or dependencies.
+## Why?
+I didn't make this decision light-hearted. FV-API started as a research and tech demo project. As such, the project wasn't well planed, the tech used by it was a bunch of buggy hacks, held together by loose amounts of duct-tape. That luckily got better within the first versions, however the API did never reach a level that I was satisfied with. Because of that I started a rewrite about one years ago, but due to a series of unlucky events this project stalled. Despite simply forward porting the legacy API would've been a task of hours, I decided against it. During the rewrite I was beaten time and time again to the conclusion that several layers of the API were flawed from the grounds up. That further stalled progress, and also was the reason why I didn't simply continue forward porting. During the two years I maintained FV-API, I got a much better understanding of how things work, and how they should've be done instead. 
+FV-API started as a tech demo/research project and I must admit that that's all it ever was. With the knowledge I have today, I probably wouldn't have published the project on CurseForge for others to use, the project was not ready for that (nor meant for it in the beginning). I think FV still reached the goal it was originally  created for: showing whats technically possible and getting others to build upon the idea.
 
-## Getting Started
+## What does this mean?
+FV-API will no longer receive updates (This includes critical bugfixes and security updates). If you're using FV-API as a library, you should move on (simply read on for more details).
 
-## IntelliJ IDEA
-This guide will show how to import the MultiLoader Template into IntelliJ IDEA. The setup process is roughly equivalent to setting up Forge and Fabric independently and should be very familiar to anyone who has worked with their MDKs.
+## What should I do (Modder)
+I do not want to recommend a specific project, however here are two projects that I came along over the last year:
+- [WATERMeDIA: Multimedia API](https://www.curseforge.com/minecraft/mc-mods/watermedia) by SrRapero720
+- [A fork](https://github.com/BehindTheScenery/FancyVideo-API) by BehindTheScenery
 
-1. Clone or download this repository to your computer.
-2. Configure the project by editing the `group`, `mod_name`, `mod_author`, and `mod_id` properties in the `gradle.properties` file. You will also need to change the `rootProject.name`  property in `settings.gradle`.
-3. Open the template's root folder as a new project in IDEA. This is the folder that contains this README file and the gradlew executable.
-4. If your default JVM/JDK is not Java 16 you will encounter an error when opening the project. This error is fixed by going to `File > Settings > Build, Execution, Deployment > Build Tools > Gradle > Gradle JVM`and changing the value to a valid Java 16 JVM. You will also need to set the Project SDK to Java 16. This can be done by going to `File > Project Structure > Project SDK`. Once both have been set open the Gradle tab in IDEA and click the refresh button to reload the project.
-5. Open the Gradle tab in IDEA if it has not already been opened. Navigate to `Your Project > Common > Tasks > vanilla gradle > decompile`. Run this task to decompile Minecraft.
-6. Open the Gradle tab in IDEA if it has not already been opened. Navigate to `Your Project > Forge > Tasks > forgegradle runs > genIntellijRuns`. Run this task to set up run configurations for Forge.
-7. Open your Run/Debug Configurations. Under the Application category there should now be options to run Forge and Fabric projects. Select one of the client options and try to run it.
-8. Assuming you were able to run the game in step 7 your workspace should now be set up.
+## What's going to happen with this discord server?
+I'll put this server in read-only mode until there is something new from me.
+I'm still interested in the project, and I've recently been obsessed with Gstreamer. Maybe one day there will be FV-2.0 (probably as a tech demo only though!).
 
-### Eclipse
-Eclipse is not supported. During the development of this mod and the template it uses multiple critical bugs and quirks related to Eclipse were found at nearly every level of the required build tools. Eclipse is considered unsupported by this project.
 
-## Development Guide
-When using this template the majority of your mod is developed in the Common project. The Common project is compiled against the vanilla game and is used to hold code that is shared between the different loader-specific versions of your mod. The Common project has no knowledge or access to ModLoader specific code, apis, or concepts. Code that requires something from a specific loader must be done through the project that is specific to that loader, such as the Forge or Fabric project.
-
-Loader specific projects such as the Forge and Fabric project are used to load the Common project into the game. These projects also define code that is specific to that loader. Loader specific projects can access all of the code in the Common project. It is important to remember that the Common project can not access code from loader specific projects.
+I just want to thank everybody who used FV-API over the last two years. I should've probably done this step half a year earlier, but I just wanted to (personally) feel sure that this is the right decision. I simply do no longer have the time required to maintain this project due to things that changed in my personal life. Thanks again for using FV-API. I hope you all stay well. 
